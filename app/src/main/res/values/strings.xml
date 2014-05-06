@@ -48,12 +48,12 @@
 
 
     <!-- TODO: Replace these by your achievement/leaderboard IDs! -->
-    <string name="achievement_prime">ReplaceMe</string>
-    <string name="achievement_really_bored">ReplaceMe</string>
-    <string name="achievement_bored">ReplaceMe</string>
-    <string name="achievement_humble">ReplaceMe</string>
-    <string name="achievement_arrogant">ReplaceMe</string>
-    <string name="achievement_leet">ReplaceMe</string>
+    <string name="achievement_prime">Achievement1</string>
+    <string name="achievement_really_bored">Achievement2</string>
+    <string name="achievement_bored">Achievement3</string>
+    <string name="achievement_humble">Achievement4</string>
+    <string name="achievement_arrogant">Achievement5</string>
+    <string name="achievement_leet">Achievement6</string>
 
     <string name="leaderboard_easy">ReplaceMe</string>
     <string name="leaderboard_hard">ReplaceMe</string>
