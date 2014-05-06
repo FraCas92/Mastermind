@@ -55,7 +55,7 @@
     <string name="achievement_arrogant">Achievement5</string>
     <string name="achievement_leet">Achievement6</string>
 
-    <string name="leaderboard_easy">ReplaceMe</string>
-    <string name="leaderboard_hard">ReplaceMe</string>
+    <string name="leaderboard_easy">Easy</string>
+    <string name="leaderboard_hard">Hard</string>
 
 </resources>
