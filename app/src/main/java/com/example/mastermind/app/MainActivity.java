@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2013 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package com.example.mastermind.app;
 
@@ -61,7 +46,7 @@ import java.util.ArrayList;
  */
 public class MainActivity extends BaseGameActivity
         implements MainMenuFragment.Listener,
-        GameplayFragment.Listener, WinFragment.Listener, OnInvitationReceivedListener,
+        GameplayFragment.Listener, OnInvitationReceivedListener,
         OnTurnBasedMatchUpdateReceivedListener {
 
     // Local convenience pointers
@@ -91,7 +76,6 @@ public class MainActivity extends BaseGameActivity
     // Fragments
     MainMenuFragment mMainMenuFragment;
     GameplayFragment mGameplayFragment;
-    WinFragment mWinFragment;
 
     // request codes we use when invoking an external activity
     final int RC_RESOLVE = 5000, RC_UNUSED = 5001;
@@ -113,7 +97,6 @@ public class MainActivity extends BaseGameActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //TODO: questo
         // create fragments
         mMainMenuFragment = new MainMenuFragment();
         mMainMenuFragment.setListener(this);
@@ -121,16 +104,9 @@ public class MainActivity extends BaseGameActivity
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,
                 mMainMenuFragment).commit();
 /*        mGameplayFragment = new GameplayFragment();
-        mWinFragment = new WinFragment();
 
         // listen to fragment events
-        mMainMenuFragment.setListener(this);
         mGameplayFragment.setListener(this);
-        mWinFragment.setListener(this);
-
-        // add initial fragment (welcome fragment)
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,
-                mMainMenuFragment).commit();
 
         // IMPORTANT: if this Activity supported rotation, we'd have to be
         // more careful about adding the fragment, since the fragment would
@@ -141,31 +117,30 @@ public class MainActivity extends BaseGameActivity
         // load outbox from file
         mOutbox.loadLocal(this);*/
 
-        // TODO: o questo?
 
         // Setup signin button
-        findViewById(R.id.sign_out_button).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        signOut();
-                        setViewVisibility();
-                    }
-                });
+//        findViewById(R.id.sign_out_button).setOnClickListener(
+//                new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        signOut();
+//                        setViewVisibility();
+//                    }
+//                });
 
-        findViewById(R.id.sign_in_button).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // start the asynchronous sign in flow
-                        beginUserInitiatedSignIn();
-
-                        findViewById(R.id.sign_in_button).setVisibility(
-                                View.GONE);
-
-                    }
-                }
-        );
+//        findViewById(R.id.sign_in_button).setOnClickListener(
+//                new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        // start the asynchronous sign in flow
+//                        beginUserInitiatedSignIn();
+//
+//                        findViewById(R.id.sign_in_button).setVisibility(
+//                                View.GONE);
+//
+//                    }
+//                }
+        //);
         mDataView = ((TextView) findViewById(R.id.data_view));
         mTurnTextView = ((TextView) findViewById(R.id.turn_counter_view));
 
@@ -356,10 +331,11 @@ public class MainActivity extends BaseGameActivity
     public void setViewVisibility() {
         if (!isSignedIn()) {
             //findViewById(R.id.login_layout).setVisibility(View.GONE);
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+            //findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             findViewById(R.id.matchup_layout).setVisibility(View.VISIBLE);
             findViewById(R.id.gameplay_layout).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+            //findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+            mMainMenuFragment.setShowSignInButton(true);
 
             if (mAlertDialog != null) {
                 mAlertDialog.dismiss();
@@ -367,12 +343,12 @@ public class MainActivity extends BaseGameActivity
             return;
         }
 
-        //((TextView) findViewById(R.id.name_field)).setText(Games.Players.getCurrentPlayer(getApiClient()).getDisplayName());
+        mMainMenuFragment.setShowSignInButton(false);
 
         //findViewById(R.id.login_layout).setVisibility(View.GONE);
 
-        findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-        findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+        //findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+        //findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
 
         if (isDoingTurn) {
             findViewById(R.id.matchup_layout).setVisibility(View.GONE);
@@ -426,50 +402,10 @@ public class MainActivity extends BaseGameActivity
         switchToFragment(mGameplayFragment);
     }
 
-    /**
-     * Checks that the developer (that's you!) read the instructions.
-     *
-     * IMPORTANT: a method like this SHOULD NOT EXIST in your production app!
-     * It merely exists here to check that anyone running THIS PARTICULAR SAMPLE
-     * did what they were supposed to in order for the sample to work.
-     */
-    boolean verifyPlaceholderIdsReplaced() {
-        final boolean CHECK_PKGNAME = true; // set to false to disable check
-        // (not recommended!)
-
-        // Did the developer forget to change the package name?
-        if (CHECK_PKGNAME && getPackageName().startsWith("com.google.example.")) {
-            Log.e(TAG, "*** Sample setup problem: " +
-                    "package name cannot be com.google.example.*. Use your own " +
-                    "package name.");
-            return false;
-        }
-
-        // Did the developer forget to replace a placeholder ID?
-        int res_ids[] = new int[] {
-                R.string.app_id, R.string.achievement_arrogant,
-                R.string.achievement_bored, R.string.achievement_humble,
-                R.string.achievement_leet, R.string.achievement_prime,
-                R.string.leaderboard_easy, R.string.leaderboard_hard
-        };
-        for (int i : res_ids) {
-            if (getString(i).equalsIgnoreCase("ReplaceMe")) {
-                Log.e(TAG, "*** Sample setup problem: You must replace all " +
-                        "placeholder IDs in the ids.xml file by your project's IDs.");
-                return false;
-            }
-        }
-        return true;
-    }
-
     @Override
     public void onEnteredScore(int requestedScore) {
         // Compute final score (in easy mode, it's the requested score; in hard mode, it's half)
         int finalScore = mHardMode ? requestedScore / 2 : requestedScore;
-
-        mWinFragment.setFinalScore(finalScore);
-        mWinFragment.setExplanation(mHardMode ? getString(R.string.hard_mode_explanation) :
-                getString(R.string.easy_mode_explanation));
 
         // check for achievements
         checkForAchievements(requestedScore, finalScore);
@@ -479,9 +415,6 @@ public class MainActivity extends BaseGameActivity
 
         // push those accomplishments to the cloud, if signed in
         pushAccomplishments();
-
-        // switch to the exciting "you won" screen
-        switchToFragment(mWinFragment);
     }
 
     // Checks if n is prime. We don't consider 0 and 1 to be prime.
@@ -598,30 +531,18 @@ public class MainActivity extends BaseGameActivity
     }
 
     @Override
-    public void onWinScreenDismissed() {
-        switchToFragment(mMainMenuFragment);
-    }
-
-    @Override
     public void onSignInFailed() {
-        // TODO: questo
         // Sign-in failed, so show sign-in button on main menu
 //        mMainMenuFragment.setGreeting(getString(R.string.signed_out_greeting));
 //        mMainMenuFragment.setShowSignInButton(true);
-        //mWinFragment.setShowSignInButton(true);
 
-        // TODO: o questo?
         setViewVisibility();
     }
 
     @Override
     public void onSignInSucceeded() {
-        //TODO: questo
         // Show sign-out button on main menu
         //mMainMenuFragment.setShowSignInButton(false);
-
-        // Show "you are signed in" message on win screen, with no sign in button.
-        //mWinFragment.setShowSignInButton(false);
 
         // Set the greeting appropriately on main menu
         Player p = Games.Players.getCurrentPlayer(getApiClient());
@@ -642,7 +563,6 @@ public class MainActivity extends BaseGameActivity
                     Toast.LENGTH_LONG).show();
         }*/
 
-        // TODO: o questo?
         if (mHelper.getTurnBasedMatch() != null) {
             // GameHelper will cache any connection hint it gets. In this case,
             // it can cache a TurnBasedMatch that it got from choosing a turn-based
@@ -670,13 +590,6 @@ public class MainActivity extends BaseGameActivity
 
     @Override
     public void onSignInButtonClicked() {
-        // check if developer read the documentation!
-        // (Note: in a production application, this code should NOT exist)
-        if (!verifyPlaceholderIdsReplaced()) {
-            showAlert("Sample not set up correctly. See README.");
-            return;
-        }
-
         // start the sign-in flow
         beginUserInitiatedSignIn();
     }
@@ -686,7 +599,6 @@ public class MainActivity extends BaseGameActivity
         signOut();
         mMainMenuFragment.setGreeting(getString(R.string.signed_out_greeting));
         mMainMenuFragment.setShowSignInButton(true);
-        mWinFragment.setShowSignInButton(true);
     }
 
     // Switch to gameplay view.
@@ -782,11 +694,6 @@ public class MainActivity extends BaseGameActivity
             /* TODO: This is left as an exercise. Write code here that loads data
              * from the file you wrote in saveLocal(). */
         }
-    }
-
-    @Override
-    public void onWinScreenSignInClicked() {
-        beginUserInitiatedSignIn();
     }
 
     // startMatch() happens in response to the createTurnBasedMatch()

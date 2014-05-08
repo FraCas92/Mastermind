@@ -51,8 +51,8 @@ public class MainMenuFragment extends Fragment implements OnClickListener {
         View v = inflater.inflate(R.layout.fragment_mainmenu, container, false);
         final int[] CLICKABLES = new int[] {
 //                R.id.easy_mode_button, R.id.hard_mode_button,
-                R.id.show_achievements_button, R.id.show_leaderboards_button
-//                R.id.sign_in_button, R.id.sign_out_button
+                R.id.show_achievements_button, R.id.show_leaderboards_button,
+                R.id.sign_in_button, R.id.sign_out_button
         };
         for (int i : CLICKABLES) {
             v.findViewById(i).setOnClickListener(this);
@@ -80,10 +80,10 @@ public class MainMenuFragment extends Fragment implements OnClickListener {
         TextView tv = (TextView) getActivity().findViewById(R.id.hello);
         if (tv != null) tv.setText(mGreeting);
 
-//        getActivity().findViewById(R.id.sign_in_bar).setVisibility(mShowSignIn ?
-//                View.VISIBLE : View.GONE);
-//        getActivity().findViewById(R.id.sign_out_bar).setVisibility(mShowSignIn ?
-//                View.GONE : View.VISIBLE);
+        getActivity().findViewById(R.id.sign_in_bar).setVisibility(mShowSignIn ?
+                View.VISIBLE : View.GONE);
+        getActivity().findViewById(R.id.sign_out_bar).setVisibility(mShowSignIn ?
+                View.GONE : View.VISIBLE);
     }
 
     @Override
