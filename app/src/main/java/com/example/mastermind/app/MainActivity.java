@@ -165,6 +165,10 @@ public class MainActivity extends BaseGameActivity
     // Create a one-on-one automatch game.
     public void onQuickMatchClicked(View view) {
 
+        Intent intent = new Intent(getApplicationContext(),SinglePlayerGamePlay.class);
+        startActivity(intent);
+
+/*
         Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
                 1, 1, 0);
 
@@ -181,6 +185,7 @@ public class MainActivity extends BaseGameActivity
             }
         };
         Games.TurnBasedMultiplayer.createMatch(getApiClient(), tbmc).setResultCallback(cb);
+        */
     }
 
     // In-game controls
