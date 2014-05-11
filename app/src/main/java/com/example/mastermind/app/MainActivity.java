@@ -55,6 +55,8 @@ public class MainActivity extends BaseGameActivity
 
     private AlertDialog mAlertDialog;
 
+    final static int RC_COMBINATION_REQUEST = 1;
+
     // For our intents
     final static int RC_SELECT_PLAYERS = 10000;
     final static int RC_LOOK_AT_MATCHES = 10001;
@@ -76,6 +78,7 @@ public class MainActivity extends BaseGameActivity
     // Fragments
     MainMenuFragment mMainMenuFragment;
     GameplayFragment mGameplayFragment;
+    MultiPlayerGamePlay mMultiPlayerActivity;
 
     // request codes we use when invoking an external activity
     final int RC_RESOLVE = 5000, RC_UNUSED = 5001;
@@ -96,6 +99,8 @@ public class MainActivity extends BaseGameActivity
         enableDebugLog(ENABLE_DEBUG, TAG);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mMultiPlayerActivity = new MultiPlayerGamePlay();
 
         // create fragments
         mMainMenuFragment = new MainMenuFragment();
@@ -162,13 +167,15 @@ public class MainActivity extends BaseGameActivity
         startActivityForResult(intent, RC_SELECT_PLAYERS);
     }
 
-    // Create a one-on-one automatch game.
-    public void onQuickMatchClicked(View view) {
+    public void onSingleMatchClicked(View view) {
 
         Intent intent = new Intent(getApplicationContext(),SinglePlayerGamePlay.class);
         startActivity(intent);
+    }
 
-/*
+    // Create a one-on-one automatch game.
+    public void onQuickMatchClicked(View view) {
+
         Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
                 1, 1, 0);
 
@@ -185,7 +192,6 @@ public class MainActivity extends BaseGameActivity
             }
         };
         Games.TurnBasedMultiplayer.createMatch(getApiClient(), tbmc).setResultCallback(cb);
-        */
     }
 
     // In-game controls
@@ -246,7 +252,6 @@ public class MainActivity extends BaseGameActivity
         String nextParticipantId = getNextParticipantId();
         // Create the next turn
         mTurnData.turnCounter += 1;
-        mTurnData.data = mDataView.getText().toString();
 
         showSpinner();
 
@@ -328,13 +333,63 @@ public class MainActivity extends BaseGameActivity
             );
             showSpinner();
         }
+        else if (request == RC_COMBINATION_REQUEST)
+        {
+            if (response == Activity.RESULT_OK)
+            {
+                // TODO: Aggiungo la combinazione al turno
+                ArrayList<Integer> res = data.getIntegerArrayListExtra("combination");
+                if (Games.Players.getCurrentPlayerId(getApiClient()).equals(mTurnData.player1Id))
+                {
+                    if (mTurnData.player1Num.equals(""))
+                        mTurnData.player1Num = res.toString();
+                    else
+                        mTurnData.data1 = mTurnData.data1 + res.toString();
+                }
+                else
+                {
+                    if (mTurnData.player2Num.equals(""))
+                        mTurnData.player2Num = res.toString();
+                    else
+                        mTurnData.data2 = mTurnData.data2 + res.toString();
+                }
+
+                showSpinner();
+
+                String nextParticipantId = getNextParticipantId();
+                // Create the next turn
+                mTurnData.turnCounter += 1;
+
+                showSpinner();
+
+                Games.TurnBasedMultiplayer.takeTurn(getApiClient(), mMatch.getMatchId(),
+                        mTurnData.persist(), nextParticipantId).setResultCallback(
+                        new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+                            @Override
+                            public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
+                                processResult(result);
+                            }
+                        });
+
+                mTurnData = null;
+
+
+            }
+            else
+            {
+
+
+            }
+        }
     }
 
     // Sign-in, Sign out behavior
 
     // Update the visibility based on what state we're in.
-    public void setViewVisibility() {
-        if (!isSignedIn()) {
+    public void setViewVisibility()
+    {
+        if (!isSignedIn())
+        {
             //findViewById(R.id.login_layout).setVisibility(View.GONE);
             //findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             findViewById(R.id.matchup_layout).setVisibility(View.VISIBLE);
@@ -357,13 +412,17 @@ public class MainActivity extends BaseGameActivity
 
         if (isDoingTurn) {
             findViewById(R.id.matchup_layout).setVisibility(View.GONE);
-            findViewById(R.id.gameplay_layout).setVisibility(View.VISIBLE);
+            mMultiPlayerActivity.SetTurn(mTurnData);
+            Intent intent = new Intent(getApplicationContext(),MultiPlayerGamePlay.class);
+
+            startActivityForResult(intent, RC_COMBINATION_REQUEST);
+            //findViewById(R.id.gameplay_layout).setVisibility(View.VISIBLE);
         } else {
             findViewById(R.id.matchup_layout).setVisibility(View.VISIBLE);
             findViewById(R.id.gameplay_layout).setVisibility(View.GONE);
         }
-    }
 
+    }
 
     // Switch UI to the given fragment
     void switchToFragment(Fragment newFrag) {
@@ -610,7 +669,12 @@ public class MainActivity extends BaseGameActivity
     public void setGameplayUI() {
         isDoingTurn = true;
         setViewVisibility();
-        mDataView.setText(mTurnData.data);
+        //mDataView.setText(mTurnData.data);
+
+        // TODO: qui ci va la decodifica dei miei vecchi turni in oggetti video (pedine colorate)
+        // mTurnData.data1...
+
+
         mTurnTextView.setText("Turn " + mTurnData.turnCounter);
     }
 
@@ -710,12 +774,15 @@ public class MainActivity extends BaseGameActivity
     public void startMatch(TurnBasedMatch match) {
         mTurnData = new Turn();
         // Some basic turn data
-        mTurnData.data = "First turn";
+        //mTurnData.data = "First turn";
 
         mMatch = match;
 
         String playerId = Games.Players.getCurrentPlayerId(getApiClient());
         String myParticipantId = mMatch.getParticipantId(playerId);
+
+        mTurnData.player1Id = playerId;
+        mTurnData.player2Id = myParticipantId;
 
         showSpinner();
 
@@ -752,7 +819,6 @@ public class MainActivity extends BaseGameActivity
      * @return participantId of next player, or null if automatching
      */
     public String getNextParticipantId() {
-
         String playerId = Games.Players.getCurrentPlayerId(getApiClient());
         String myParticipantId = mMatch.getParticipantId(playerId);
 

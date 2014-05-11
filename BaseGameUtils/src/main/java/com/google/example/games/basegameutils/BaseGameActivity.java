@@ -114,7 +114,9 @@ public abstract class BaseGameActivity extends FragmentActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        mHelper.onStop();
+        // TODO: OCCHIO.. MOMENTANEAMENTE REMMATA IN QUANTO CHIAMANDO L'ACTIVITY MULTIPLAYER ARRIVA UN ONSTOP CHE STACCA LA CONNESSIONE AI PLAY SERVICES..
+        // QUESTO PERò NON DOVREBBE SUCCEDERE.. L'ACTIVITY DOVREBBE ANDARE IN ONPAUSE.. DA CAPIRE
+        //mHelper.onStop();
     }
 
     @Override
