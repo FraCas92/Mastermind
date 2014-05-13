@@ -15,6 +15,8 @@ import QuickAction.QuickAction;
 
 public class MultiPlayerGamePlay extends ActionBarActivity {
 
+    // TODO x MIRKO S: aggiungere colori, per ora altri 2.. con relative immagini ed eventi
+
     ImageView img_primo_colore;
     ImageView img_secondo_colore;
     ImageView img_terzo_colore;
@@ -22,15 +24,31 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
     ImageView changeImage;  // variabile che conterra' l'ID dell'immagine da modificare ogni qual volta si apre QuickAction
 
     Integer [] combinazione;
+    Integer [] combinazioneScelta = new Integer[4];
+
+    Integer pos_colore;
 
     QuickAction mQuickAction;
 
     Turn mTurnData;
 
+
+    public MultiPlayerGamePlay(Turn turn)
+    {
+        mTurnData = turn;
+    }
+
+    public MultiPlayerGamePlay()
+    {
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_player);
+
+        // TODO: qui nell'OnCreate dovrò valorizzare la tavola iniziale con i miei tentativi precedenti..
+        // Per farlo devo leggere da mTurnData...
 
         // Recupero id delle immagini
         img_primo_colore = (ImageView) findViewById(R.id.imageView);
@@ -62,6 +80,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
+                pos_colore=0;
                 avviaSceltaColore(img_primo_colore);
 
             }
@@ -70,6 +89,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
+                pos_colore=1;
                 avviaSceltaColore(img_secondo_colore);
 
             }
@@ -78,7 +98,8 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                avviaSceltaColore(img_primo_colore);
+                pos_colore=2;
+                avviaSceltaColore(img_terzo_colore);
 
             }
         });
@@ -86,6 +107,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
+                pos_colore=3;
                 avviaSceltaColore(img_quarto_colore);
 
             }
@@ -98,6 +120,26 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         mQuickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
             @Override
             public void onItemClick(int pos) {
+                int coloreScelto = 0;
+
+                if (pos == 0) { //Add item selected
+                    changeImage.setImageResource(R.drawable.ic_rosso);
+                    coloreScelto=1;
+                } else if (pos == 1) {
+                    changeImage.setImageResource(R.drawable.ic_blu);
+                    coloreScelto=2;
+                } else if (pos == 2) {
+                    changeImage.setImageResource(R.drawable.ic_verde);
+                    coloreScelto=3;
+                } else if (pos == 3) {
+                    changeImage.setImageResource(R.drawable.ic_giallo);
+                    coloreScelto=4;
+                }
+
+
+                // Salvo sul posizione della combinazione il colore scelto
+                if (coloreScelto>0)
+                    combinazioneScelta[pos_colore] = coloreScelto;
 
             }
         });
@@ -105,13 +147,12 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
 
     }
 
-    public void SetTurn(Turn turn)
-    {
-        mTurnData = turn;
-    }
-
     public void onCheckClicked(View view)
     {
+        // TODO x MIRKO S: qua bisogna controllare che non ci siano colori ripetuti e
+        // .. se io ho già una combinazione, allora devo validare la combinazione inserita con il numero dell'avversario..
+
+        // e poi restituire la combinazione alla MainActivity che salva il turno..
         ArrayList<Integer> res = new ArrayList<Integer>(4);
         res.add(1);
         res.add(2);
@@ -147,16 +188,6 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         mQuickAction.setAnimStyle(QuickAction.ANIM_AUTO);
         mQuickAction.show(immagine);
     }
-    /*
-    * Genero 4 numeri casuali compresi tra 1 e 4
-    * */
-    private void getCombinazioneMagica(){
-        combinazione = new  Integer[4];
-        for (int i = 0; i < 4; i++) {
-            combinazione[i] = 1+(int)(Math.random()*4);
-        }
 
 
-
-    }
 }

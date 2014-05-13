@@ -100,8 +100,6 @@ public class MainActivity extends BaseGameActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mMultiPlayerActivity = new MultiPlayerGamePlay();
-
         // create fragments
         mMainMenuFragment = new MainMenuFragment();
         mMainMenuFragment.setListener(this);
@@ -337,7 +335,6 @@ public class MainActivity extends BaseGameActivity
         {
             if (response == Activity.RESULT_OK)
             {
-                // TODO: Aggiungo la combinazione al turno
                 ArrayList<Integer> res = data.getIntegerArrayListExtra("combination");
                 if (Games.Players.getCurrentPlayerId(getApiClient()).equals(mTurnData.player1Id))
                 {
@@ -357,6 +354,7 @@ public class MainActivity extends BaseGameActivity
                 showSpinner();
 
                 String nextParticipantId = getNextParticipantId();
+
                 // Create the next turn
                 mTurnData.turnCounter += 1;
 
@@ -412,7 +410,7 @@ public class MainActivity extends BaseGameActivity
 
         if (isDoingTurn) {
             findViewById(R.id.matchup_layout).setVisibility(View.GONE);
-            mMultiPlayerActivity.SetTurn(mTurnData);
+            mMultiPlayerActivity = new MultiPlayerGamePlay(mTurnData);
             Intent intent = new Intent(getApplicationContext(),MultiPlayerGamePlay.class);
 
             startActivityForResult(intent, RC_COMBINATION_REQUEST);
@@ -670,9 +668,6 @@ public class MainActivity extends BaseGameActivity
         isDoingTurn = true;
         setViewVisibility();
         //mDataView.setText(mTurnData.data);
-
-        // TODO: qui ci va la decodifica dei miei vecchi turni in oggetti video (pedine colorate)
-        // mTurnData.data1...
 
 
         mTurnTextView.setText("Turn " + mTurnData.turnCounter);
