@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -23,8 +24,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
     ImageView img_quarto_colore;
     ImageView changeImage;  // variabile che conterra' l'ID dell'immagine da modificare ogni qual volta si apre QuickAction
 
-    Integer [] combinazione;
-    Integer [] combinazioneScelta = new Integer[4];
+    ArrayList<Integer> combinazioneScelta = new ArrayList<Integer>(4);
 
     Integer pos_colore;
 
@@ -50,6 +50,9 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         // TODO: qui nell'OnCreate dovrò valorizzare la tavola iniziale con i miei tentativi precedenti..
         // Per farlo devo leggere da mTurnData...
 
+        for (int i=0; i<4; i++)
+            combinazioneScelta.add(-1);
+
         // Recupero id delle immagini
         img_primo_colore = (ImageView) findViewById(R.id.imageView);
         img_secondo_colore = (ImageView) findViewById(R.id.imageView2);
@@ -61,11 +64,15 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         ActionItem addGreen = new ActionItem();
         ActionItem addRed = new ActionItem();
         ActionItem addYellow = new ActionItem();
+        ActionItem addPink = new ActionItem();
+        ActionItem addOrange = new ActionItem();
 
         addBlu.setIcon(getResources().getDrawable(R.drawable.ic_rosso));
         addGreen.setIcon(getResources().getDrawable(R.drawable.ic_blu));
         addRed.setIcon(getResources().getDrawable(R.drawable.ic_verde));
         addYellow.setIcon(getResources().getDrawable(R.drawable.ic_giallo));
+        addPink.setIcon(getResources().getDrawable(R.drawable.ic_rosa));
+        addOrange.setIcon(getResources().getDrawable(R.drawable.ic_arancione));
 
         // Creo la Quick action e ci aggiungo i colori
         mQuickAction = new QuickAction(this);
@@ -73,6 +80,8 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         mQuickAction.addActionItem(addGreen);
         mQuickAction.addActionItem(addRed);
         mQuickAction.addActionItem(addYellow);
+        mQuickAction.addActionItem(addPink);
+        mQuickAction.addActionItem(addOrange);
 
         // Gestione eventi: al click di ogni singola immagine (colore) presente
         // nell'activity devo richiamare Quick action per la scelta del colore
@@ -134,12 +143,17 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
                 } else if (pos == 3) {
                     changeImage.setImageResource(R.drawable.ic_giallo);
                     coloreScelto=4;
+                } else if (pos == 4) {
+                    changeImage.setImageResource(R.drawable.ic_rosa);
+                    coloreScelto=5;
+                } else if (pos == 5) {
+                    changeImage.setImageResource(R.drawable.ic_arancione);
+                    coloreScelto=6;
                 }
-
 
                 // Salvo sul posizione della combinazione il colore scelto
                 if (coloreScelto>0)
-                    combinazioneScelta[pos_colore] = coloreScelto;
+                    combinazioneScelta.set(pos_colore, coloreScelto);
 
             }
         });
@@ -149,16 +163,26 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
 
     public void onCheckClicked(View view)
     {
-        // TODO x MIRKO S: qua bisogna controllare che non ci siano colori ripetuti e
-        // .. se io ho già una combinazione, allora devo validare la combinazione inserita con il numero dell'avversario..
+        if (combinazioneScelta.contains(-1))
+            return;
+
+        // Controllo che non ci siano valori ripetuti nella combinazione..
+        // PORCHERIA.. ma per ora va bene così!
+        if ((combinazioneScelta.get(0).equals(combinazioneScelta.get(1))) ||
+            (combinazioneScelta.get(0).equals(combinazioneScelta.get(2))) ||
+            (combinazioneScelta.get(0).equals(combinazioneScelta.get(3))) ||
+            (combinazioneScelta.get(1).equals(combinazioneScelta.get(2))) ||
+            (combinazioneScelta.get(1).equals(combinazioneScelta.get(3))) ||
+            (combinazioneScelta.get(2).equals(combinazioneScelta.get(3))))
+        {
+            Toast.makeText(this, "I colori della combinazione non possono essere ripetuti!",Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // TODO: Devo anche controllare se la mia combinazione è già presente o se sto facendo un tentativo.. In quel caso devo mostrare il risultato..
 
         // e poi restituire la combinazione alla MainActivity che salva il turno..
-        ArrayList<Integer> res = new ArrayList<Integer>(4);
-        res.add(1);
-        res.add(2);
-        res.add(3);
-        res.add(4);
-        getIntent().putIntegerArrayListExtra("combination", res);
+        getIntent().putIntegerArrayListExtra("combination", combinazioneScelta);
         setResult(RESULT_OK, getIntent());
         finish();
     }
