@@ -16,26 +16,26 @@ import QuickAction.QuickAction;
 
 public class MultiPlayerGamePlay extends ActionBarActivity {
 
-    // TODO x MIRKO S: aggiungere colori, per ora altri 2.. con relative immagini ed eventi
+    ImageView mImg_primo_colore;
+    ImageView mImg_secondo_colore;
+    ImageView mImg_terzo_colore;
+    ImageView mImg_quarto_colore;
+    ImageView mChangeImage;  // variabile che conterra' l'ID dell'immagine da modificare ogni qual volta si apre QuickAction
 
-    ImageView img_primo_colore;
-    ImageView img_secondo_colore;
-    ImageView img_terzo_colore;
-    ImageView img_quarto_colore;
-    ImageView changeImage;  // variabile che conterra' l'ID dell'immagine da modificare ogni qual volta si apre QuickAction
+    ArrayList<Integer> mCombinazioneScelta = new ArrayList<Integer>(4);
 
-    ArrayList<Integer> combinazioneScelta = new ArrayList<Integer>(4);
-
-    Integer pos_colore;
+    Integer mPos_colore;
+    byte mCurrentPlayer;
 
     QuickAction mQuickAction;
 
     Turn mTurnData;
 
 
-    public MultiPlayerGamePlay(Turn turn)
+    public MultiPlayerGamePlay(Turn turn, byte curPlayer)
     {
         mTurnData = turn;
+        mCurrentPlayer = curPlayer;
     }
 
     public MultiPlayerGamePlay()
@@ -51,13 +51,13 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         // Per farlo devo leggere da mTurnData...
 
         for (int i=0; i<4; i++)
-            combinazioneScelta.add(-1);
+            mCombinazioneScelta.add(-1);
 
         // Recupero id delle immagini
-        img_primo_colore = (ImageView) findViewById(R.id.imageView);
-        img_secondo_colore = (ImageView) findViewById(R.id.imageView2);
-        img_terzo_colore = (ImageView) findViewById(R.id.imageView3);
-        img_quarto_colore = (ImageView) findViewById(R.id.imageView4);
+        mImg_primo_colore = (ImageView) findViewById(R.id.imageView);
+        mImg_secondo_colore = (ImageView) findViewById(R.id.imageView2);
+        mImg_terzo_colore = (ImageView) findViewById(R.id.imageView3);
+        mImg_quarto_colore = (ImageView) findViewById(R.id.imageView4);
 
         // Colori da visualizzare nella Quick Action (per la scelta del colore)
         ActionItem addBlu = new ActionItem();
@@ -85,39 +85,39 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
 
         // Gestione eventi: al click di ogni singola immagine (colore) presente
         // nell'activity devo richiamare Quick action per la scelta del colore
-        img_primo_colore.setOnClickListener(new View.OnClickListener() {
+        mImg_primo_colore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                pos_colore=0;
-                avviaSceltaColore(img_primo_colore);
+                mPos_colore = 0;
+                avviaSceltaColore(mImg_primo_colore);
 
             }
         });
-        img_secondo_colore.setOnClickListener(new View.OnClickListener() {
+        mImg_secondo_colore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                pos_colore=1;
-                avviaSceltaColore(img_secondo_colore);
+                mPos_colore = 1;
+                avviaSceltaColore(mImg_secondo_colore);
 
             }
         });
-        img_terzo_colore.setOnClickListener(new View.OnClickListener() {
+        mImg_terzo_colore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                pos_colore=2;
-                avviaSceltaColore(img_terzo_colore);
+                mPos_colore = 2;
+                avviaSceltaColore(mImg_terzo_colore);
 
             }
         });
-        img_quarto_colore.setOnClickListener(new View.OnClickListener() {
+        mImg_quarto_colore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                pos_colore=3;
-                avviaSceltaColore(img_quarto_colore);
+                mPos_colore = 3;
+                avviaSceltaColore(mImg_quarto_colore);
 
             }
         });
@@ -132,28 +132,28 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
                 int coloreScelto = 0;
 
                 if (pos == 0) { //Add item selected
-                    changeImage.setImageResource(R.drawable.ic_rosso);
+                    mChangeImage.setImageResource(R.drawable.ic_rosso);
                     coloreScelto=1;
                 } else if (pos == 1) {
-                    changeImage.setImageResource(R.drawable.ic_blu);
+                    mChangeImage.setImageResource(R.drawable.ic_blu);
                     coloreScelto=2;
                 } else if (pos == 2) {
-                    changeImage.setImageResource(R.drawable.ic_verde);
+                    mChangeImage.setImageResource(R.drawable.ic_verde);
                     coloreScelto=3;
                 } else if (pos == 3) {
-                    changeImage.setImageResource(R.drawable.ic_giallo);
+                    mChangeImage.setImageResource(R.drawable.ic_giallo);
                     coloreScelto=4;
                 } else if (pos == 4) {
-                    changeImage.setImageResource(R.drawable.ic_rosa);
+                    mChangeImage.setImageResource(R.drawable.ic_rosa);
                     coloreScelto=5;
                 } else if (pos == 5) {
-                    changeImage.setImageResource(R.drawable.ic_arancione);
+                    mChangeImage.setImageResource(R.drawable.ic_arancione);
                     coloreScelto=6;
                 }
 
                 // Salvo sul posizione della combinazione il colore scelto
                 if (coloreScelto>0)
-                    combinazioneScelta.set(pos_colore, coloreScelto);
+                    mCombinazioneScelta.set(mPos_colore, coloreScelto);
 
             }
         });
@@ -163,26 +163,42 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
 
     public void onCheckClicked(View view)
     {
-        if (combinazioneScelta.contains(-1))
+        if (mCombinazioneScelta.contains(-1))
             return;
 
         // Controllo che non ci siano valori ripetuti nella combinazione..
-        // PORCHERIA.. ma per ora va bene così!
-        if ((combinazioneScelta.get(0).equals(combinazioneScelta.get(1))) ||
-            (combinazioneScelta.get(0).equals(combinazioneScelta.get(2))) ||
-            (combinazioneScelta.get(0).equals(combinazioneScelta.get(3))) ||
-            (combinazioneScelta.get(1).equals(combinazioneScelta.get(2))) ||
-            (combinazioneScelta.get(1).equals(combinazioneScelta.get(3))) ||
-            (combinazioneScelta.get(2).equals(combinazioneScelta.get(3))))
+        if (!NumberHelper.IsValid(mCombinazioneScelta))
         {
             Toast.makeText(this, "I colori della combinazione non possono essere ripetuti!",Toast.LENGTH_LONG).show();
             return;
         }
 
-        // TODO: Devo anche controllare se la mia combinazione è già presente o se sto facendo un tentativo.. In quel caso devo mostrare il risultato..
+        // Reperisco la mia combinazione e quella dell'avversario
+        String sOpponentNumber;
+        String sMyNumber;
+        if (mCurrentPlayer==1) {
+            sMyNumber = mTurnData.player1Num;
+            sOpponentNumber = mTurnData.player2Num;
+
+        }
+        else {
+            sMyNumber = mTurnData.player2Num;
+            sOpponentNumber = mTurnData.player1Num;
+        }
+
+        // Se la mia combinazione non è vuota.. Devo controllare quella inserita con quella dell'avversario
+        if (!sMyNumber.equals(""))
+        {
+            ArrayList<Integer> opponentNumber = new ArrayList<Integer>(4);
+            for (int i = 0; i < 4; i++)
+                opponentNumber.add(Integer.getInteger(sOpponentNumber.substring(i, i)));
+
+            Integer nSquares = 0, nDots = 0;
+            NumberHelper.CheckNumber(mCombinazioneScelta, opponentNumber, nSquares, nDots);
+        }
 
         // e poi restituire la combinazione alla MainActivity che salva il turno..
-        getIntent().putIntegerArrayListExtra("combination", combinazioneScelta);
+        getIntent().putIntegerArrayListExtra("combination", mCombinazioneScelta);
         setResult(RESULT_OK, getIntent());
         finish();
     }
@@ -207,7 +223,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
     }
 
     private void avviaSceltaColore(ImageView immagine){
-        changeImage = immagine;
+        mChangeImage = immagine;
         //imageScelta = tmp;
         mQuickAction.setAnimStyle(QuickAction.ANIM_AUTO);
         mQuickAction.show(immagine);

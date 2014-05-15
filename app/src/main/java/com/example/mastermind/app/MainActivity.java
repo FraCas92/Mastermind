@@ -410,7 +410,10 @@ public class MainActivity extends BaseGameActivity
 
         if (isDoingTurn) {
             findViewById(R.id.matchup_layout).setVisibility(View.GONE);
-            mMultiPlayerActivity = new MultiPlayerGamePlay(mTurnData);
+            byte curPlayer = 1;
+            if (!Games.Players.getCurrentPlayerId(getApiClient()).equals(mTurnData.player1Id))
+                curPlayer = 2;
+            mMultiPlayerActivity = new MultiPlayerGamePlay(mTurnData, curPlayer);
             Intent intent = new Intent(getApplicationContext(),MultiPlayerGamePlay.class);
 
             startActivityForResult(intent, RC_COMBINATION_REQUEST);
