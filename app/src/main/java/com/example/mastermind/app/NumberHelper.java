@@ -7,10 +7,28 @@ import java.util.ArrayList;
  */
 public class NumberHelper
 {
-    static void CheckNumber(ArrayList<Integer> Num1, ArrayList<Integer> Num2, Integer nSquares, Integer nDots)
+    static byte[] CheckNumber(ArrayList<Integer> Num1, ArrayList<Integer> Num2)
     {
+        byte nSquares=0, nDots=0;
+        for (int i=0; i<4; i++)
+        {
+            if (Num1.get(i).equals(Num2.get(i)))
+                nSquares++;
+            else if (Num1.contains(Num2.get(i)))
+                nDots++;
+        }
+        byte[] result = new byte[2];
+        result[0]=nSquares;
+        result[1]=nDots;
+        return result;
+    }
 
-
+    static String GetString(ArrayList<Integer> num)
+    {
+        String strNum="";
+        for (int i=0; i<4; i++)
+            strNum += num.get(i).toString();
+        return strNum;
     }
 
     static boolean IsValid(ArrayList<Integer> number)

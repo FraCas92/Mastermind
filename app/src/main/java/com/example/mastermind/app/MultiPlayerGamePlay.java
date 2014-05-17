@@ -25,22 +25,9 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
     ArrayList<Integer> mCombinazioneScelta = new ArrayList<Integer>(4);
 
     Integer mPos_colore;
-    byte mCurrentPlayer;
 
     QuickAction mQuickAction;
 
-    Turn mTurnData;
-
-
-    public MultiPlayerGamePlay(Turn turn, byte curPlayer)
-    {
-        mTurnData = turn;
-        mCurrentPlayer = curPlayer;
-    }
-
-    public MultiPlayerGamePlay()
-    {
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,14 +163,14 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         // Reperisco la mia combinazione e quella dell'avversario
         String sOpponentNumber;
         String sMyNumber;
-        if (mCurrentPlayer==1) {
-            sMyNumber = mTurnData.player1Num;
-            sOpponentNumber = mTurnData.player2Num;
+        if (MainActivity.mCurPlayer==1) {
+            sMyNumber = MainActivity.mTurnData.player1Num;
+            sOpponentNumber = MainActivity.mTurnData.player2Num;
 
         }
         else {
-            sMyNumber = mTurnData.player2Num;
-            sOpponentNumber = mTurnData.player1Num;
+            sMyNumber = MainActivity.mTurnData.player2Num;
+            sOpponentNumber = MainActivity.mTurnData.player1Num;
         }
 
         // Se la mia combinazione non è vuota.. Devo controllare quella inserita con quella dell'avversario
@@ -193,8 +180,9 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             for (int i = 0; i < 4; i++)
                 opponentNumber.add(Integer.getInteger(sOpponentNumber.substring(i, i)));
 
-            Integer nSquares = 0, nDots = 0;
-            NumberHelper.CheckNumber(mCombinazioneScelta, opponentNumber, nSquares, nDots);
+            byte[] result = NumberHelper.CheckNumber(mCombinazioneScelta, opponentNumber);
+            byte nSquares = result[0];
+            byte nDots = result[1];
         }
 
         // e poi restituire la combinazione alla MainActivity che salva il turno..

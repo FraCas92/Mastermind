@@ -73,7 +73,9 @@ public class MainActivity extends BaseGameActivity
     // This is the current match data after being unpersisted.
     // Do not retain references to match data once you have
     // taken an action on the match, such as takeTurn()
-    public Turn mTurnData;
+    // QUESTI DUE AL MOMENTO SONO STATIC PERCHè NON HO ANCORA CAPITO COME CAZZO SI PASSANO ALLA NUOVA ACTIVITY!
+    public static Turn mTurnData;
+    public static byte mCurPlayer;
 
     // Fragments
     MainMenuFragment mMainMenuFragment;
@@ -339,16 +341,16 @@ public class MainActivity extends BaseGameActivity
                 if (Games.Players.getCurrentPlayerId(getApiClient()).equals(mTurnData.player1Id))
                 {
                     if (mTurnData.player1Num.equals(""))
-                        mTurnData.player1Num = res.toString();
+                        mTurnData.player1Num = NumberHelper.GetString(res);
                     else
-                        mTurnData.data1 = mTurnData.data1 + res.toString();
+                        mTurnData.data1 = mTurnData.data1 + "-" + NumberHelper.GetString(res);
                 }
                 else
                 {
                     if (mTurnData.player2Num.equals(""))
-                        mTurnData.player2Num = res.toString();
+                        mTurnData.player2Num = NumberHelper.GetString(res);
                     else
-                        mTurnData.data2 = mTurnData.data2 + res.toString();
+                        mTurnData.data2 = mTurnData.data2 + "-" + NumberHelper.GetString(res);
                 }
 
                 showSpinner();
@@ -410,10 +412,10 @@ public class MainActivity extends BaseGameActivity
 
         if (isDoingTurn) {
             findViewById(R.id.matchup_layout).setVisibility(View.GONE);
-            byte curPlayer = 1;
+            mCurPlayer = 1;
             if (!Games.Players.getCurrentPlayerId(getApiClient()).equals(mTurnData.player1Id))
-                curPlayer = 2;
-            mMultiPlayerActivity = new MultiPlayerGamePlay(mTurnData, curPlayer);
+                mCurPlayer = 2;
+            //mMultiPlayerActivity = new MultiPlayerGamePlay(mTurnData, curPlayer);
             Intent intent = new Intent(getApplicationContext(),MultiPlayerGamePlay.class);
 
             startActivityForResult(intent, RC_COMBINATION_REQUEST);
