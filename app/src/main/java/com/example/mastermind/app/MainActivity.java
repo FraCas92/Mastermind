@@ -17,9 +17,13 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.Player;
+import com.google.android.gms.games.leaderboard.LeaderboardScore;
+import com.google.android.gms.games.leaderboard.LeaderboardVariant;
+import com.google.android.gms.games.leaderboard.Leaderboards;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
+import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
@@ -37,11 +41,6 @@ import java.util.ArrayList;
  * replace the IDs on res/values/ids.xml by your own IDs (you must
  * create a game in the developer console to get those IDs).
  *
- * This is a very simple game where the user selects "easy mode" or
- * "hard mode" and then the "gameplay" consists of inputting the
- * desired score (0 to 9999). In easy mode, you get the score you
- * request; in hard mode, you get half.
- *
  * @author Bruno Oliveira
  */
 public class MainActivity extends BaseGameActivity
@@ -56,6 +55,8 @@ public class MainActivity extends BaseGameActivity
     private AlertDialog mAlertDialog;
 
     final static int RC_COMBINATION_REQUEST = 1;
+
+    final static int RESULT_FINISH = 2;
 
     // For our intents
     final static int RC_SELECT_PLAYERS = 10000;
@@ -73,9 +74,8 @@ public class MainActivity extends BaseGameActivity
     // This is the current match data after being unpersisted.
     // Do not retain references to match data once you have
     // taken an action on the match, such as takeTurn()
-    // QUESTI DUE AL MOMENTO SONO STATIC PERCHè NON HO ANCORA CAPITO COME CAZZO SI PASSANO ALLA NUOVA ACTIVITY!
+    // QUESTO AL MOMENTO è STATIC PERCHè NON HO ANCORA CAPITO COME PASSARLO ALLA NUOVA ACTIVITY!
     public static Turn mTurnData;
-    public static byte mCurPlayer;
 
     // Fragments
     MainMenuFragment mMainMenuFragment;
@@ -89,8 +89,8 @@ public class MainActivity extends BaseGameActivity
     final boolean ENABLE_DEBUG = true;
     final String TAG = "TanC";
 
-    // playing on hard mode?
-    boolean mHardMode = false;
+    // playing on single mode?
+    boolean mSingleMode = false;
 
     // achievements and scores we're pending to push to the cloud
     // (waiting for the user to sign in, for instance)
@@ -163,7 +163,7 @@ public class MainActivity extends BaseGameActivity
     // and figure out what to do.
     public void onStartMatchClicked(View view) {
         Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(getApiClient(),
-                1, 7, true);
+                1, 1, true);
         startActivityForResult(intent, RC_SELECT_PLAYERS);
     }
 
@@ -182,7 +182,6 @@ public class MainActivity extends BaseGameActivity
         TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
                 .setAutoMatchCriteria(autoMatchCriteria).build();
 
-        showSpinner();
 
         // Start the match
         ResultCallback<TurnBasedMultiplayer.InitiateMatchResult> cb = new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
@@ -195,77 +194,6 @@ public class MainActivity extends BaseGameActivity
     }
 
     // In-game controls
-
-    // Cancel the game. Should possibly wait until the game is canceled before
-    // giving up on the view.
-    public void onCancelClicked(View view) {
-        showSpinner();
-        Games.TurnBasedMultiplayer.cancelMatch(getApiClient(), mMatch.getMatchId())
-                .setResultCallback(new ResultCallback<TurnBasedMultiplayer.CancelMatchResult>() {
-                    @Override
-                    public void onResult(TurnBasedMultiplayer.CancelMatchResult result) {
-                        processResult(result);
-                    }
-                });
-        isDoingTurn = false;
-        setViewVisibility();
-    }
-
-    // Leave the game during your turn. Note that there is a separate
-    // GamesStatusCodes.leaveTurnBasedMatch() if you want to leave NOT on your turn.
-    public void onLeaveClicked(View view) {
-        showSpinner();
-        String nextParticipantId = getNextParticipantId();
-
-        Games.TurnBasedMultiplayer.leaveMatchDuringTurn(getApiClient(), mMatch.getMatchId(),
-                nextParticipantId).setResultCallback(
-                new ResultCallback<TurnBasedMultiplayer.LeaveMatchResult>() {
-                    @Override
-                    public void onResult(TurnBasedMultiplayer.LeaveMatchResult result) {
-                        processResult(result);
-                    }
-                });
-        setViewVisibility();
-    }
-
-    // Finish the game. Sometimes, this is your only choice.
-    public void onFinishClicked(View view) {
-        showSpinner();
-        Games.TurnBasedMultiplayer.finishMatch(getApiClient(), mMatch.getMatchId())
-                .setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
-                    @Override
-                    public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
-                        processResult(result);
-                    }
-                });
-
-        isDoingTurn = false;
-        setViewVisibility();
-    }
-
-
-    // Upload your new gamestate, then take a turn, and pass it on to the next
-    // player.
-    public void onDoneClicked(View view) {
-        showSpinner();
-
-        String nextParticipantId = getNextParticipantId();
-        // Create the next turn
-        mTurnData.turnCounter += 1;
-
-        showSpinner();
-
-        Games.TurnBasedMultiplayer.takeTurn(getApiClient(), mMatch.getMatchId(),
-                mTurnData.persist(), nextParticipantId).setResultCallback(
-                new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
-                    @Override
-                    public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
-                        processResult(result);
-                    }
-                });
-
-        mTurnData = null;
-    }
 
     // This function is what gets called when you return from either the Play
     // Games built-in inbox, or else the create game built-in interface.
@@ -331,57 +259,77 @@ public class MainActivity extends BaseGameActivity
                         }
                     }
             );
-            showSpinner();
         }
         else if (request == RC_COMBINATION_REQUEST)
         {
             if (response == Activity.RESULT_OK)
-            {
-                ArrayList<Integer> res = data.getIntegerArrayListExtra("combination");
-                if (Games.Players.getCurrentPlayerId(getApiClient()).equals(mTurnData.player1Id))
-                {
-                    if (mTurnData.player1Num.equals(""))
-                        mTurnData.player1Num = NumberHelper.GetString(res);
-                    else
-                        mTurnData.data1 = mTurnData.data1 + "-" + NumberHelper.GetString(res);
-                }
-                else
-                {
-                    if (mTurnData.player2Num.equals(""))
-                        mTurnData.player2Num = NumberHelper.GetString(res);
-                    else
-                        mTurnData.data2 = mTurnData.data2 + "-" + NumberHelper.GetString(res);
-                }
-
-                showSpinner();
-
-                String nextParticipantId = getNextParticipantId();
-
-                // Create the next turn
-                mTurnData.turnCounter += 1;
-
-                showSpinner();
-
-                Games.TurnBasedMultiplayer.takeTurn(getApiClient(), mMatch.getMatchId(),
-                        mTurnData.persist(), nextParticipantId).setResultCallback(
-                        new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
-                            @Override
-                            public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
-                                processResult(result);
-                            }
-                        });
-
-                mTurnData = null;
-
-
-            }
+                takeTurn(data);
+            else if (response==RESULT_FINISH)
+                finishMatch();
             else
             {
-
-
+                isDoingTurn=false;
+                setViewVisibility();
             }
         }
     }
+
+    public void takeTurn(Intent data)
+    {
+        ArrayList<Integer> res = data.getIntegerArrayListExtra("combination");
+        if (Games.Players.getCurrentPlayerId(getApiClient()).equals(mTurnData.player1Id))
+        {
+            if (mTurnData.player1Num.equals(""))
+                mTurnData.player1Num = NumberHelper.GetString(res);
+            else
+                mTurnData.data1 = mTurnData.data1 + "-" + NumberHelper.GetString(res);
+        }
+        else
+        {
+            if (mTurnData.player2Num.equals(""))
+                mTurnData.player2Num = NumberHelper.GetString(res);
+            else
+                mTurnData.data2 = mTurnData.data2 + "-" + NumberHelper.GetString(res);
+        }
+
+
+        String nextParticipantId = getNextParticipantId();
+
+        // Create the next turn
+        mTurnData.turnCounter += 1;
+
+        Games.TurnBasedMultiplayer.takeTurn(getApiClient(), mMatch.getMatchId(),
+                mTurnData.persist(), nextParticipantId).setResultCallback(
+                new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+                    @Override
+                    public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
+                        processResult(result);
+                    }
+                }
+        );
+
+        mTurnData = null;
+    }
+
+    public void finishMatch()
+    {
+        String playerId = Games.Players.getCurrentPlayerId(getApiClient());
+        String myParticipantId = mMatch.getParticipantId(playerId);
+        ParticipantResult playerResult = new ParticipantResult(myParticipantId, ParticipantResult.MATCH_RESULT_WIN, 1);
+
+        Games.TurnBasedMultiplayer.finishMatch(getApiClient(), mMatch.getMatchId(),
+                mTurnData.persist(), playerResult).setResultCallback(
+                new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+                    @Override
+                    public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
+                        processResult(result);
+                    }
+                }
+        );
+
+        mTurnData = null;
+    }
+
 
     // Sign-in, Sign out behavior
 
@@ -412,12 +360,12 @@ public class MainActivity extends BaseGameActivity
 
         if (isDoingTurn) {
             findViewById(R.id.matchup_layout).setVisibility(View.GONE);
-            mCurPlayer = 1;
+            byte curPlayer = 1;
             if (!Games.Players.getCurrentPlayerId(getApiClient()).equals(mTurnData.player1Id))
-                mCurPlayer = 2;
+                curPlayer = 2;
             //mMultiPlayerActivity = new MultiPlayerGamePlay(mTurnData, curPlayer);
             Intent intent = new Intent(getApplicationContext(),MultiPlayerGamePlay.class);
-
+            intent.putExtra("curPlayer", curPlayer);
             startActivityForResult(intent, RC_COMBINATION_REQUEST);
             //findViewById(R.id.gameplay_layout).setVisibility(View.VISIBLE);
         } else {
@@ -431,11 +379,6 @@ public class MainActivity extends BaseGameActivity
     void switchToFragment(Fragment newFrag) {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFrag)
                 .commit();
-    }
-
-    @Override
-    public void onStartGameRequested(boolean hardMode) {
-        startGame(hardMode);
     }
 
     @Override
@@ -453,48 +396,20 @@ public class MainActivity extends BaseGameActivity
         if (isSignedIn()) {
             startActivityForResult(Games.Leaderboards.getAllLeaderboardsIntent(getApiClient()),
                     RC_UNUSED);
+            //startActivityForResult(Games.Leaderboards.getLeaderboardIntent(getApiClient(), getString(R.string.leaderboard_multi)), RC_UNUSED);
         } else {
             showAlert(getString(R.string.leaderboards_not_available));
         }
     }
 
-    /**
-     * Start gameplay. This means updating some status variables and switching
-     * to the "gameplay" screen (the screen where the user types the score they want).
-     *
-     * @param hardMode whether to start gameplay in "hard mode".
-     */
-    void startGame(boolean hardMode) {
-        mHardMode = hardMode;
-        switchToFragment(mGameplayFragment);
-    }
-
     @Override
-    public void onEnteredScore(int requestedScore) {
-        // Compute final score (in easy mode, it's the requested score; in hard mode, it's half)
-        int finalScore = mHardMode ? requestedScore / 2 : requestedScore;
+    public void onEnteredScore(int finalScore) {
 
         // check for achievements
-        checkForAchievements(requestedScore, finalScore);
+        checkForAchievements(finalScore, finalScore);
 
         // update leaderboards
         updateLeaderboards(finalScore);
-
-        // push those accomplishments to the cloud, if signed in
-        pushAccomplishments();
-    }
-
-    // Checks if n is prime. We don't consider 0 and 1 to be prime.
-    // This is not an implementation we are mathematically proud of, but it gets the job done.
-    boolean isPrime(int n) {
-        int i;
-        if (n == 0 || n == 1) return false;
-        for (i = 2; i <= n / 2; i++) {
-            if (n % i == 0) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -506,10 +421,10 @@ public class MainActivity extends BaseGameActivity
     void checkForAchievements(int requestedScore, int finalScore) {
         // Check if each condition is met; if so, unlock the corresponding
         // achievement.
-        if (isPrime(finalScore)) {
-            mOutbox.mPrimeAchievement = true;
-            achievementToast(getString(R.string.achievement_prime_toast_text));
-        }
+//        if (isPrime(finalScore)) {
+//            mOutbox.mPrimeAchievement = true;
+//            achievementToast(getString(R.string.achievement_prime_toast_text));
+//        }
         if (requestedScore == 9999) {
             mOutbox.mArrogantAchievement = true;
             achievementToast(getString(R.string.achievement_arrogant_toast_text));
@@ -571,15 +486,15 @@ public class MainActivity extends BaseGameActivity
             Games.Achievements.increment(getApiClient(), getString(R.string.achievement_bored),
                     mOutbox.mBoredSteps);
         }
-        if (mOutbox.mEasyModeScore >= 0) {
-            Games.Leaderboards.submitScore(getApiClient(), getString(R.string.leaderboard_easy),
-                    mOutbox.mEasyModeScore);
-            mOutbox.mEasyModeScore = -1;
+        if (mOutbox.mMultiPlayerModeScore >= 0) {
+            Games.Leaderboards.submitScore(getApiClient(), getString(R.string.leaderboard_multi),
+                    mOutbox.mMultiPlayerModeScore);
+            mOutbox.mMultiPlayerModeScore = -1;
         }
-        if (mOutbox.mHardModeScore >= 0) {
-            Games.Leaderboards.submitScore(getApiClient(), getString(R.string.leaderboard_hard),
-                    mOutbox.mHardModeScore);
-            mOutbox.mHardModeScore = -1;
+        if (mOutbox.mSinglePlayerModeScore >= 0) {
+            Games.Leaderboards.submitScore(getApiClient(), getString(R.string.leaderboard_single),
+                    mOutbox.mSinglePlayerModeScore);
+            mOutbox.mSinglePlayerModeScore = -1;
         }
         mOutbox.saveLocal(this);
     }
@@ -589,11 +504,36 @@ public class MainActivity extends BaseGameActivity
      *
      * @param finalScore The score the user got.
      */
-    void updateLeaderboards(int finalScore) {
-        if (mHardMode && mOutbox.mHardModeScore < finalScore) {
-            mOutbox.mHardModeScore = finalScore;
-        } else if (!mHardMode && mOutbox.mEasyModeScore < finalScore) {
-            mOutbox.mEasyModeScore = finalScore;
+    void updateLeaderboards(final int finalScore) {
+        if (mSingleMode && mOutbox.mSinglePlayerModeScore < finalScore) {
+            mOutbox.mSinglePlayerModeScore = finalScore;
+        } else if (!mSingleMode)
+        {
+            if (mOutbox.mMultiPlayerModeScore < 0)
+            {
+                Games.Leaderboards.loadCurrentPlayerLeaderboardScore(getApiClient(),
+                        getString(R.string.leaderboard_multi), LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC)
+                        .setResultCallback(
+                                new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
+                                    @Override
+                                    public void onResult(Leaderboards.LoadPlayerScoreResult result)
+                                    {
+                                        mOutbox.mMultiPlayerModeScore = finalScore;
+                                        LeaderboardScore score = result.getScore();
+                                        if (score != null)
+                                            mOutbox.mMultiPlayerModeScore += (int) score.getRawScore();
+
+                                        // push those accomplishments to the cloud, if signed in
+                                        pushAccomplishments();
+                                    }
+                                }
+                        );
+            }
+            else
+            {
+                mOutbox.mMultiPlayerModeScore += finalScore;
+                pushAccomplishments();
+            }
         }
     }
 
@@ -678,16 +618,6 @@ public class MainActivity extends BaseGameActivity
         mTurnTextView.setText("Turn " + mTurnData.turnCounter);
     }
 
-    // Helpful dialogs
-
-    public void showSpinner() {
-        findViewById(R.id.progressLayout).setVisibility(View.VISIBLE);
-    }
-
-    public void dismissSpinner() {
-        findViewById(R.id.progressLayout).setVisibility(View.GONE);
-    }
-
     // Generic warning/info dialog
     public void showWarning(String title, String message) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -743,13 +673,13 @@ public class MainActivity extends BaseGameActivity
         boolean mLeetAchievement = false;
         boolean mArrogantAchievement = false;
         int mBoredSteps = 0;
-        int mEasyModeScore = -1;
-        int mHardModeScore = -1;
+        int mSinglePlayerModeScore = -1;
+        int mMultiPlayerModeScore = -1;
 
         boolean isEmpty() {
             return !mPrimeAchievement && !mHumbleAchievement && !mLeetAchievement &&
-                    !mArrogantAchievement && mBoredSteps == 0 && mEasyModeScore < 0 &&
-                    mHardModeScore < 0;
+                    !mArrogantAchievement && mBoredSteps == 0 && mSinglePlayerModeScore < 0 &&
+                    mMultiPlayerModeScore < 0;
         }
 
         public void saveLocal(Context ctx) {
@@ -784,8 +714,6 @@ public class MainActivity extends BaseGameActivity
         mTurnData.player1Id = playerId;
         mTurnData.player2Id = myParticipantId;
 
-        showSpinner();
-
         Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
                 mTurnData.persist(), myParticipantId).setResultCallback(
                 new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
@@ -798,7 +726,6 @@ public class MainActivity extends BaseGameActivity
 
     // If you choose to rematch, then call it and wait for a response.
     public void rematch() {
-        showSpinner();
         Games.TurnBasedMultiplayer.rematch(getApiClient(), mMatch.getMatchId()).setResultCallback(
                 new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
                     @Override
@@ -899,22 +826,8 @@ public class MainActivity extends BaseGameActivity
         setViewVisibility();
     }
 
-    private void processResult(TurnBasedMultiplayer.CancelMatchResult result) {
-        dismissSpinner();
-
-        if (!checkStatusCode(null, result.getStatus().getStatusCode())) {
-            return;
-        }
-
-        isDoingTurn = false;
-
-        showWarning("Match",
-                "This match is canceled.  All other players will have their game ended.");
-    }
-
     private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
         TurnBasedMatch match = result.getMatch();
-        dismissSpinner();
 
         if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
             return;
@@ -930,23 +843,18 @@ public class MainActivity extends BaseGameActivity
     }
 
 
-    private void processResult(TurnBasedMultiplayer.LeaveMatchResult result) {
-        TurnBasedMatch match = result.getMatch();
-        dismissSpinner();
-        if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
-            return;
-        }
-        isDoingTurn = (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN);
-        showWarning("Left", "You've left this match.");
-    }
-
-
     public void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
         TurnBasedMatch match = result.getMatch();
-        dismissSpinner();
+
         if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
             return;
         }
+
+        // Se ho terminato il match, aggiungo 3 punti al giocatore corrente che è il vincitore
+        if (match.getStatus() == TurnBasedMatch.MATCH_STATUS_COMPLETE)
+            onEnteredScore(3);
+
+        // Proposta rivincita
         if (match.canRematch()) {
             askForRematch();
         }

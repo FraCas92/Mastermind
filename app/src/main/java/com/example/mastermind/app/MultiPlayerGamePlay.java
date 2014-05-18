@@ -26,6 +26,8 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
 
     Integer mPos_colore;
 
+    byte mCurPlayer;
+
     QuickAction mQuickAction;
 
 
@@ -36,6 +38,8 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
 
         // TODO: qui nell'OnCreate dovrò valorizzare la tavola iniziale con i miei tentativi precedenti..
         // Per farlo devo leggere da mTurnData...
+
+        mCurPlayer = getIntent().getByteExtra("curPlayer",(byte)0);
 
         for (int i=0; i<4; i++)
             mCombinazioneScelta.add(-1);
@@ -163,7 +167,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         // Reperisco la mia combinazione e quella dell'avversario
         String sOpponentNumber;
         String sMyNumber;
-        if (MainActivity.mCurPlayer==1) {
+        if (mCurPlayer==1) {
             sMyNumber = MainActivity.mTurnData.player1Num;
             sOpponentNumber = MainActivity.mTurnData.player2Num;
 
@@ -173,7 +177,9 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             sOpponentNumber = MainActivity.mTurnData.player1Num;
         }
 
-        // Se la mia combinazione non è vuota.. Devo controllare quella inserita con quella dell'avversario
+        int nResultCode = RESULT_OK;
+
+        // Se la mia combinazione non è vuota.. Devo confrontare quella inserita con quella dell'avversario
         if (!sMyNumber.equals(""))
         {
             ArrayList<Integer> opponentNumber = new ArrayList<Integer>(4);
@@ -183,11 +189,19 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             byte[] result = NumberHelper.CheckNumber(mCombinazioneScelta, opponentNumber);
             byte nSquares = result[0];
             byte nDots = result[1];
+
+            // Se ho azzeccato la combinazione devo evidenziare in qualche modo la vittoria e restituire un codice speciale
+            if (nSquares==4)
+            {
+
+                nResultCode = MainActivity.RESULT_FINISH;
+            }
+
         }
 
         // e poi restituire la combinazione alla MainActivity che salva il turno..
         getIntent().putIntegerArrayListExtra("combination", mCombinazioneScelta);
-        setResult(RESULT_OK, getIntent());
+        setResult(nResultCode, getIntent());
         finish();
     }
 

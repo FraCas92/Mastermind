@@ -35,7 +35,6 @@ public class MainMenuFragment extends Fragment implements OnClickListener {
     String mGreeting = "Hello, anonymous user (not signed in)";
 
     public interface Listener {
-        public void onStartGameRequested(boolean hardMode);
         public void onShowAchievementsRequested();
         public void onShowLeaderboardsRequested();
         public void onSignInButtonClicked();
