@@ -6,4 +6,10 @@
 <resources>
 <string name="leaderboard_multi">CgkI-4TS19UfEAIQAQ</string>
 <string name="leaderboard_single">CgkI-4TS19UfEAIQAg</string>
+<string name="achievement_solo">CgkI-4TS19UfEAIQAw</string>
+<string name="achievement_beginner">CgkI-4TS19UfEAIQBA</string>
+<string name="achievement_lucky_day">CgkI-4TS19UfEAIQBg</string>
+<string name="achievement_telepathic">CgkI-4TS19UfEAIQBQ</string>
+<string name="achievement_clever_mind">CgkI-4TS19UfEAIQBw</string>
+<string name="achievement_master_mind">CgkI-4TS19UfEAIQCA</string>
 </resources>

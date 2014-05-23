@@ -183,8 +183,14 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         if (!sMyNumber.equals(""))
         {
             ArrayList<Integer> opponentNumber = new ArrayList<Integer>(4);
-            for (int i = 0; i < 4; i++)
-                opponentNumber.add(Integer.getInteger(sOpponentNumber.substring(i, i)));
+            for (int i = 0; i < 4; i++) {
+                String s = sOpponentNumber.substring(i, i+1);
+                int a = Integer.valueOf(s);
+
+                opponentNumber.add(a);
+            }
+
+
 
             byte[] result = NumberHelper.CheckNumber(mCombinazioneScelta, opponentNumber);
             byte nSquares = result[0];

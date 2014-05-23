@@ -49,12 +49,8 @@
 
 
     <!-- TODO: Replace these by your achievement/leaderboard IDs! -->
-    <string name="achievement_prime">Achievement1</string>
     <string name="achievement_really_bored">Achievement2</string>
     <string name="achievement_bored">Achievement3</string>
-    <string name="achievement_humble">Achievement4</string>
-    <string name="achievement_arrogant">Achievement5</string>
-    <string name="achievement_leet">Achievement6</string>
 
     <string name="status_multiplayer_error_not_trusted_tester">Anyone you invite must be a trusted tester</string>
     <string name="match_error_already_rematched">This rematch has already been started!</string>

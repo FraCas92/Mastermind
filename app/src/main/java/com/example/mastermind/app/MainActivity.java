@@ -308,7 +308,6 @@ public class MainActivity extends BaseGameActivity
                 }
         );
 
-        mTurnData = null;
     }
 
     public void finishMatch()
@@ -327,7 +326,6 @@ public class MainActivity extends BaseGameActivity
                 }
         );
 
-        mTurnData = null;
     }
 
 
@@ -425,19 +423,17 @@ public class MainActivity extends BaseGameActivity
 //            mOutbox.mPrimeAchievement = true;
 //            achievementToast(getString(R.string.achievement_prime_toast_text));
 //        }
-        if (requestedScore == 9999) {
-            mOutbox.mArrogantAchievement = true;
-            achievementToast(getString(R.string.achievement_arrogant_toast_text));
-        }
-        if (requestedScore == 0) {
-            mOutbox.mHumbleAchievement = true;
-            achievementToast(getString(R.string.achievement_humble_toast_text));
-        }
-        if (finalScore == 1337) {
-            mOutbox.mLeetAchievement = true;
-            achievementToast(getString(R.string.achievement_leet_toast_text));
-        }
+        if (mSingleMode)
+            mOutbox.mSingleAchievement = true;
+        else
+            mOutbox.mMultiAchievement = true;
+
+        if (mTurnData.data1.isEmpty() && mTurnData.data2.isEmpty())
+            mOutbox.mTelepathicAchievement = true;
+
         mOutbox.mBoredSteps++;
+
+        pushAccomplishments();
     }
 
     void unlockAchievement(int achievementId, String fallbackString) {
@@ -464,22 +460,33 @@ public class MainActivity extends BaseGameActivity
             mOutbox.saveLocal(this);
             return;
         }
-        if (mOutbox.mPrimeAchievement) {
-            Games.Achievements.unlock(getApiClient(), getString(R.string.achievement_prime));
-            mOutbox.mPrimeAchievement = false;
+        if (mOutbox.mSingleAchievement) {
+            Games.Achievements.unlock(getApiClient(), getString(R.string.achievement_solo));
+            mOutbox.mSingleAchievement = false;
         }
-        if (mOutbox.mArrogantAchievement) {
-            Games.Achievements.unlock(getApiClient(), getString(R.string.achievement_arrogant));
-            mOutbox.mArrogantAchievement = false;
+        if (mOutbox.mMultiAchievement) {
+            Games.Achievements.unlock(getApiClient(), getString(R.string.achievement_beginner));
+            mOutbox.mMultiAchievement = false;
         }
-        if (mOutbox.mHumbleAchievement) {
-            Games.Achievements.unlock(getApiClient(), getString(R.string.achievement_humble));
-            mOutbox.mHumbleAchievement = false;
+        if (mOutbox.mLuckyAchievement) {
+            Games.Achievements.unlock(getApiClient(), getString(R.string.achievement_lucky_day));
+            mOutbox.mLuckyAchievement = false;
         }
-        if (mOutbox.mLeetAchievement) {
-            Games.Achievements.unlock(getApiClient(), getString(R.string.achievement_leet));
-            mOutbox.mLeetAchievement = false;
+        if (mOutbox.mTelepathicAchievement) {
+            Games.Achievements.unlock(getApiClient(), getString(R.string.achievement_telepathic));
+            mOutbox.mTelepathicAchievement = false;
         }
+
+        if (mOutbox.mCleverAchievement) {
+            Games.Achievements.unlock(getApiClient(), getString(R.string.achievement_clever_mind));
+            mOutbox.mCleverAchievement = false;
+        }
+
+        if (mOutbox.mMasterAchievement) {
+            Games.Achievements.unlock(getApiClient(), getString(R.string.achievement_master_mind));
+            mOutbox.mMasterAchievement = false;
+        }
+
         if (mOutbox.mBoredSteps > 0) {
             Games.Achievements.increment(getApiClient(), getString(R.string.achievement_really_bored),
                     mOutbox.mBoredSteps);
@@ -668,19 +675,21 @@ public class MainActivity extends BaseGameActivity
     }
 
     class AccomplishmentsOutbox {
-        boolean mPrimeAchievement = false;
-        boolean mHumbleAchievement = false;
-        boolean mLeetAchievement = false;
-        boolean mArrogantAchievement = false;
+        boolean mCleverAchievement = false;
+        boolean mMasterAchievement = false;
+        boolean mSingleAchievement = false;
+        boolean mMultiAchievement = false;
+        boolean mLuckyAchievement = false;
+        boolean mTelepathicAchievement = false;
         int mBoredSteps = 0;
         int mSinglePlayerModeScore = -1;
         int mMultiPlayerModeScore = -1;
 
-        boolean isEmpty() {
-            return !mPrimeAchievement && !mHumbleAchievement && !mLeetAchievement &&
-                    !mArrogantAchievement && mBoredSteps == 0 && mSinglePlayerModeScore < 0 &&
-                    mMultiPlayerModeScore < 0;
-        }
+//        boolean isEmpty() {
+//            return !mPrimeAchievement && !mHumbleAchievement && !mLeetAchievement &&
+//                    !mArrogantAchievement && mBoredSteps == 0 && mSinglePlayerModeScore < 0 &&
+//                    mMultiPlayerModeScore < 0;
+//        }
 
         public void saveLocal(Context ctx) {
             /* TODO: This is left as an exercise. To make it more difficult to cheat,
@@ -821,8 +830,6 @@ public class MainActivity extends BaseGameActivity
                         "Still waiting for invitations.\n\nBe patient!");
         }
 
-        mTurnData = null;
-
         setViewVisibility();
     }
 
@@ -847,12 +854,15 @@ public class MainActivity extends BaseGameActivity
         TurnBasedMatch match = result.getMatch();
 
         if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+            mTurnData = null;
             return;
         }
 
         // Se ho terminato il match, aggiungo 3 punti al giocatore corrente che è il vincitore
         if (match.getStatus() == TurnBasedMatch.MATCH_STATUS_COMPLETE)
             onEnteredScore(3);
+
+        mTurnData = null;
 
         // Proposta rivincita
         if (match.canRematch()) {
