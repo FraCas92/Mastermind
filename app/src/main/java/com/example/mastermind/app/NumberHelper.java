@@ -43,6 +43,25 @@ public class NumberHelper
         return true;
     }
 
+    static ArrayList<ArrayList<Integer>> GetNumbersListFromString(String data)
+    {
+        ArrayList<ArrayList<Integer>> list = new ArrayList<ArrayList<Integer>>();
+        for (int j = 0; j < data.length(); j++)
+        {
+            ArrayList<Integer> number = new ArrayList<Integer>(4);
+            for (int i = j; i < j+4; i++) {
+                String s = data.substring(i, i+1);
+                int a = Integer.valueOf(s);
+                number.add(a);
+            }
+            list.add(number);
+            // Incremento j per saltare il trattino di separazione dei numeri (1234-1234-1234....)
+            j++;
+        }
+
+        return list;
+    }
+
 
 
 

@@ -276,27 +276,37 @@ public class MainActivity extends BaseGameActivity
 
     public void takeTurn(Intent data)
     {
+        boolean incrementTurnCount = false;
+
         ArrayList<Integer> res = data.getIntegerArrayListExtra("combination");
         if (Games.Players.getCurrentPlayerId(getApiClient()).equals(mTurnData.player1Id))
         {
             if (mTurnData.player1Num.equals(""))
                 mTurnData.player1Num = NumberHelper.GetString(res);
-            else
-                mTurnData.data1 = mTurnData.data1 + "-" + NumberHelper.GetString(res);
+            else {
+                if (!mTurnData.data1.isEmpty())
+                    mTurnData.data1 += "-";
+                mTurnData.data1 += NumberHelper.GetString(res);
+                incrementTurnCount = true;
+            }
         }
         else
         {
             if (mTurnData.player2Num.equals(""))
                 mTurnData.player2Num = NumberHelper.GetString(res);
-            else
-                mTurnData.data2 = mTurnData.data2 + "-" + NumberHelper.GetString(res);
+            else {
+                if (!mTurnData.data1.isEmpty())
+                    mTurnData.data1 += "-";
+                mTurnData.data1 += NumberHelper.GetString(res);
+            }
         }
 
 
         String nextParticipantId = getNextParticipantId();
 
-        // Create the next turn
-        mTurnData.turnCounter += 1;
+        // Solo il player 1 incrementa il contatore dei turni.. Questo contatore ci serve per gli achievements
+        if (incrementTurnCount)
+            mTurnData.turnCounter += 1;
 
         Games.TurnBasedMultiplayer.takeTurn(getApiClient(), mMatch.getMatchId(),
                 mTurnData.persist(), nextParticipantId).setResultCallback(
@@ -430,6 +440,16 @@ public class MainActivity extends BaseGameActivity
 
         if (mTurnData.data1.isEmpty() && mTurnData.data2.isEmpty())
             mOutbox.mTelepathicAchievement = true;
+
+        if (mTurnData.turnCounter<=5)
+        {
+            mOutbox.mCleverAchievement = true;
+            if (mTurnData.turnCounter<=3)
+                mOutbox.mMasterAchievement = true;
+        }
+
+        // Manca solo la gestione del "LuckyDay" Achievement.. è un po diverso rispetto agli altri perchè dovrebbe essere controllato al primo turno e non a fine match
+
 
         mOutbox.mBoredSteps++;
 
