@@ -236,6 +236,9 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         }
 
         int nResultCode = RESULT_OK;
+        // L'activity va conclusa solo se sto immettendo la mia combinazione..
+        // In caso contrario l'utente deve poter vedere il proprio tentativo
+        boolean bFinish = true;
 
         // Se la mia combinazione non è vuota.. Devo confrontare quella inserita con quella dell'avversario
         if (mStrMyNumber!=null && !mStrMyNumber.equals(""))
@@ -254,9 +257,8 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             // Mi posiziono sull'ultimo elemento aggiunto
             mList_combinazioni.smoothScrollToPosition(mCombinazioniProvate.size());
 
+            bFinish=false;
             button_checkCombinazione.setEnabled(false);
-            // TODO: Qui bisogna lanciare una dialog simile a quella, ma deve solo mostrare il risultato corrente
-            //avviaMessaggioPartitaVinta();
 
             // Se ho azzeccato la combinazione devo evidenziare in qualche modo la vittoria e restituire un codice speciale
             if (combinazioneProvata.getStato_combinazione()==4)
@@ -269,7 +271,8 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         // e poi restituire la combinazione alla MainActivity che salva il turno..
         getIntent().putIntegerArrayListExtra("combination", mCombinazioneScelta);
         setResult(nResultCode, getIntent());
-        finish();
+        if (bFinish)
+            finish();
     }
 
     public void SvuotaSceltaColori()
@@ -310,7 +313,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
     /* Dialog riferito alla vincita della partita *
     /
      */
-    private void avviaMessaggioPartitaVinta() {
+    private void avviaMessaggioRisultato() {
 
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_gamewin);
