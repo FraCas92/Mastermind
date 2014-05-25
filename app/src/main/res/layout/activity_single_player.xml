@@ -12,7 +12,9 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/find_opponent_code"
         android:id="@+id/textView"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="5dp"
+        android:typeface="monospace" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -25,26 +27,49 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_help" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="space"
+            android:id="@+id/textView2"
+            android:textSize="5dp"
+            android:visibility="invisible" />
+
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingLeft="10dp"
             android:src="@drawable/ic_help" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="space"
+            android:id="@+id/textView3"
+            android:textSize="5dp"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingLeft="10dp"
             android:src="@drawable/ic_help" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="space"
+            android:id="@+id/textView4"
+            android:textSize="5dp"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/imageView4"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             android:src="@drawable/ic_help" />
 
         <Button
@@ -53,13 +78,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onCheckClicked"
-            android:text="Check" />
+            android:text="Check"
+            android:layout_marginLeft="25dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/TextView15"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="8dp"
+        android:background="#000000"
+        android:text=" __________________" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="TENTATIVI"
+        android:id="@+id/textView5"
+        android:typeface="monospace" />
 
     <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
     </ListView>
 
 </LinearLayout>
