@@ -32,6 +32,7 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.example.games.basegameutils.BaseGameActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Our main activity for the game.
@@ -326,8 +327,15 @@ public class MainActivity extends BaseGameActivity
         String myParticipantId = mMatch.getParticipantId(playerId);
         ParticipantResult playerResult = new ParticipantResult(myParticipantId, ParticipantResult.MATCH_RESULT_WIN, 1);
 
+        String nextParticipantId = getNextParticipantId();
+        ParticipantResult opponentResult = new ParticipantResult(nextParticipantId, ParticipantResult.MATCH_RESULT_LOSS, 2);
+
+        List<ParticipantResult> resultList = new ArrayList<ParticipantResult>();
+        resultList.add(playerResult);
+        resultList.add(opponentResult);
+
         Games.TurnBasedMultiplayer.finishMatch(getApiClient(), mMatch.getMatchId(),
-                mTurnData.persist(), playerResult).setResultCallback(
+                mTurnData.persist(), resultList).setResultCallback(
                 new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
                     @Override
                     public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
@@ -399,8 +407,14 @@ public class MainActivity extends BaseGameActivity
         }
     }
 
+    public void ShowInstructions()
+    {
+        startActivity(new Intent(getApplicationContext(), HelpActivity.class));
+    }
+
     @Override
-    public void onShowLeaderboardsRequested() {
+    public void onShowLeaderboardsRequested()
+    {
         if (isSignedIn()) {
             startActivityForResult(Games.Leaderboards.getAllLeaderboardsIntent(getApiClient()),
                     RC_UNUSED);

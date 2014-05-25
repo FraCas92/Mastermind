@@ -45,14 +45,12 @@
     <string name="you_win">You win! Your score is:</string>
     <string name="sign_in_to_upload_this_score">Sign in now to upload this score, save your achievements and share your progress with friends.</string>
     <string name="single_match">single player match</string>
-
     <string name="find_opponent_code">Trova la combinazione corretta</string>
     <string name="choose_your_code">Scegli la tua combinazione</string>
 
     <!-- TODO: Replace these by your achievement/leaderboard IDs! -->
     <string name="achievement_really_bored">Achievement2</string>
     <string name="achievement_bored">Achievement3</string>
-
     <string name="status_multiplayer_error_not_trusted_tester">Anyone you invite must be a trusted tester</string>
     <string name="match_error_already_rematched">This rematch has already been started!</string>
     <string name="client_reconnect_required">Games client reconnect required</string>
@@ -60,8 +58,7 @@
     <string name="internal_error">Internal error</string>
     <string name="unexpected_status">Unexpected status</string>
     <string name="match_error_inactive_match">This match is inactive.</string>
-    <string name='match_error_locally_modified'>This match has locally-modified data.  This operation cannot be performed until the match is sent to the server.</string>
-
+    <string name="match_error_locally_modified">This match has locally-modified data.  This operation cannot be performed until the match is sent to the server.</string>
     <string name="next_turn_">Next turn</string>
     <string name="welcome">Welcome to the Skeleton, the game!  This is network-only, so you&amp;apos;ll need to log in to play!</string>
     <string name="match_instructions">Type in a new word for the data in this game, then hit done.</string>
@@ -76,5 +73,8 @@
     <string name="check_games">Check games</string>
     <string name="start_match">Start Match</string>
     <string name="turn_counter">Turn counter</string>
+    <string name="title_activity_help">Help</string>
+
+    <string name="instructions">Mastermind is a code-breaking game for two players.\nYou can play offline against the computer or online with a friend.\nThe goal is to guess the colour combination created by your opponent.\nEach player choose a colour combination and try to guess the opponent\'s one.\nFor every guess submitted, you\'ll receive 4 small circles indicating the result: </string>
 
 </resources>

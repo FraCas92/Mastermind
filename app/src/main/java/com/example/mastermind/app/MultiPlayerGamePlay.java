@@ -1,37 +1,44 @@
 package com.example.mastermind.app;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 import Bean.ActionItem;
+import Bean.Combinazione;
 import QuickAction.QuickAction;
 
 
 public class MultiPlayerGamePlay extends ActionBarActivity {
 
+    Button button_checkCombinazione;
     ImageView mImg_primo_colore;
     ImageView mImg_secondo_colore;
     ImageView mImg_terzo_colore;
     ImageView mImg_quarto_colore;
     ImageView mChangeImage;  // variabile che conterra' l'ID dell'immagine da modificare ogni qual volta si apre QuickAction
-
     ArrayList<Integer> mCombinazioneScelta = new ArrayList<Integer>(4);
-
+    ArrayList<Integer> mCombinazioneVincente;
     Integer mPos_colore;
-
     byte mCurPlayer;
-
     boolean mChoose_your_code;
-
     QuickAction mQuickAction;
+    AdapterCombinazioni mAdapter;              // Adapter della listView
+    ListView mList_combinazioni;               // Lista combinazioni provate
+    List<Combinazione> mCombinazioniProvate;   // Elenco combinazioni provate
+    String mStrMyNumber;
 
 
     @Override
@@ -39,26 +46,66 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_player);
 
-        // TODO: qui nell'OnCreate dovrò valorizzare la tavola iniziale con i miei tentativi precedenti..
-        // Per farlo devo leggere da mTurnData...
+        mCurPlayer = getIntent().getByteExtra("curPlayer",(byte)0);
 
+        for (int i=0; i<4; i++)
+            mCombinazioneScelta.add(-1);
+
+        mList_combinazioni = (ListView) findViewById(R.id.listView1);
+
+        mCombinazioniProvate = new ArrayList<Combinazione>();
+        mAdapter = new AdapterCombinazioni(this,R.layout.row_combinazione,mCombinazioniProvate);
+        mList_combinazioni.setAdapter(mAdapter);
 
         if (MainActivity.mTurnData.player1Num.isEmpty() || MainActivity.mTurnData.player2Num.isEmpty())
         {
             mChoose_your_code = true;
             ((TextView) findViewById(R.id.textView)).setText(R.string.choose_your_code);
         }
+        else
+        {
+            // Reperisco la mia combinazione e quella dell'avversario
+            String sOpponentNumber;
+            String sMyData;
+            if (mCurPlayer==1)
+            {
+                mStrMyNumber = MainActivity.mTurnData.player1Num;
+                sOpponentNumber = MainActivity.mTurnData.player2Num;
+                sMyData = MainActivity.mTurnData.data1;
+            }
+            else
+            {
+                mStrMyNumber = MainActivity.mTurnData.player2Num;
+                sOpponentNumber = MainActivity.mTurnData.player1Num;
+                sMyData = MainActivity.mTurnData.data2;
+            }
 
-        mCurPlayer = getIntent().getByteExtra("curPlayer",(byte)0);
+            mCombinazioneVincente = new ArrayList<Integer>(4);
+            for (int i = 0; i < 4; i++)
+            {
+                String s = sOpponentNumber.substring(i, i+1);
+                int a = Integer.valueOf(s);
+                mCombinazioneVincente.add(a);
+            }
 
-        for (int i=0; i<4; i++)
-            mCombinazioneScelta.add(-1);
+            // Valorizzo la tavola iniziale con i miei tentativi precedenti
+            if (!sMyData.isEmpty())
+            {
+                ArrayList<ArrayList<Integer>> combinazioni = NumberHelper.GetNumbersListFromString(sMyData);
+                for (ArrayList<Integer> element:combinazioni)
+                {
+                    Combinazione combinazione = new Combinazione(element, mCombinazioneVincente, 4);
+                    mCombinazioniProvate.add(combinazione);
+                }
+            }
+        }
 
         // Recupero id delle immagini
         mImg_primo_colore = (ImageView) findViewById(R.id.imageView);
         mImg_secondo_colore = (ImageView) findViewById(R.id.imageView2);
         mImg_terzo_colore = (ImageView) findViewById(R.id.imageView3);
         mImg_quarto_colore = (ImageView) findViewById(R.id.imageView4);
+        mList_combinazioni = (ListView) findViewById(R.id.listView1);
 
         // Colori da visualizzare nella Quick Action (per la scelta del colore)
         ActionItem addRed = new ActionItem();
@@ -91,8 +138,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                mPos_colore = 0;
-                avviaSceltaColore(mImg_primo_colore);
+                avviaSceltaColore(mImg_primo_colore,0);
 
             }
         });
@@ -100,8 +146,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                mPos_colore = 1;
-                avviaSceltaColore(mImg_secondo_colore);
+                avviaSceltaColore(mImg_secondo_colore,1);
 
             }
         });
@@ -109,8 +154,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                mPos_colore = 2;
-                avviaSceltaColore(mImg_terzo_colore);
+                avviaSceltaColore(mImg_terzo_colore,2);
 
             }
         });
@@ -118,8 +162,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                mPos_colore = 3;
-                avviaSceltaColore(mImg_quarto_colore);
+                avviaSceltaColore(mImg_quarto_colore,3);
 
             }
         });
@@ -160,7 +203,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             }
         });
 
-
+        button_checkCombinazione = (Button) findViewById(R.id.button1);
     }
 
     public void onCheckClicked(View view)
@@ -192,38 +235,31 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             }
         }
 
-        // Reperisco la mia combinazione e quella dell'avversario
-        String sOpponentNumber;
-        String sMyNumber;
-        if (mCurPlayer==1) {
-            sMyNumber = MainActivity.mTurnData.player1Num;
-            sOpponentNumber = MainActivity.mTurnData.player2Num;
-
-        }
-        else {
-            sMyNumber = MainActivity.mTurnData.player2Num;
-            sOpponentNumber = MainActivity.mTurnData.player1Num;
-        }
-
         int nResultCode = RESULT_OK;
 
         // Se la mia combinazione non è vuota.. Devo confrontare quella inserita con quella dell'avversario
-        if (!sMyNumber.equals(""))
+        if (mStrMyNumber!=null && !mStrMyNumber.equals(""))
         {
-            ArrayList<Integer> opponentNumber = new ArrayList<Integer>(4);
-            for (int i = 0; i < 4; i++) {
-                String s = sOpponentNumber.substring(i, i+1);
-                int a = Integer.valueOf(s);
+            Combinazione combinazioneProvata = new Combinazione(mCombinazioneScelta, mCombinazioneVincente, 4);
 
-                opponentNumber.add(a);
+            if (combinazioneProvata.isCombinazioneEsistente(mCombinazioniProvate)){
+                Toast.makeText(this,"La combinazione è gia' stata provata" ,Toast.LENGTH_SHORT).show();
+                return;
             }
 
-            byte[] result = NumberHelper.CheckNumber(mCombinazioneScelta, opponentNumber);
-            byte nSquares = result[0];
-            byte nDots = result[1];
+            // aggiungo la combinazione alla list View
+            mCombinazioniProvate.add(combinazioneProvata);
+            mAdapter.notifyDataSetChanged();
+
+            // Mi posiziono sull'ultimo elemento aggiunto
+            mList_combinazioni.smoothScrollToPosition(mCombinazioniProvate.size());
+
+            button_checkCombinazione.setEnabled(false);
+            // TODO: Qui bisogna lanciare una dialog simile a quella, ma deve solo mostrare il risultato corrente
+            //avviaMessaggioPartitaVinta();
 
             // Se ho azzeccato la combinazione devo evidenziare in qualche modo la vittoria e restituire un codice speciale
-            if (nSquares==4)
+            if (combinazioneProvata.getStato_combinazione()==4)
             {
 
                 nResultCode = MainActivity.RESULT_FINISH;
@@ -263,11 +299,37 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void avviaSceltaColore(ImageView immagine){
+    private void avviaSceltaColore(ImageView immagine, int posizione){
         mChangeImage = immagine;
+		mPos_colore = posizione;
         //imageScelta = tmp;
         mQuickAction.setAnimStyle(QuickAction.ANIM_AUTO);
         mQuickAction.show(immagine);
+    }
+
+    /* Dialog riferito alla vincita della partita *
+    /
+     */
+    private void avviaMessaggioPartitaVinta() {
+
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_gamewin);
+        dialog.setTitle("COMPLIMENTI");
+        dialog.setCancelable(true);
+
+        ImageView dialog_img_prima = (ImageView) dialog.findViewById(R.id.imageView);
+        ImageView dialog_img_seconda = (ImageView) dialog.findViewById(R.id.imageView2);
+        ImageView dialog_img_terza = (ImageView) dialog.findViewById(R.id.imageView3);
+        ImageView dialog_img_quarta = (ImageView) dialog.findViewById(R.id.imageView4);
+
+        int nCombinazioni = mCombinazioniProvate.size();
+
+        dialog_img_prima.setImageResource(mCombinazioniProvate.get(nCombinazioni - 1).getColore(0));
+        dialog_img_seconda.setImageResource(mCombinazioniProvate.get(nCombinazioni - 1).getColore(1));
+        dialog_img_terza.setImageResource(mCombinazioniProvate.get(nCombinazioni - 1).getColore(2));
+        dialog_img_quarta.setImageResource(mCombinazioniProvate.get(nCombinazioni - 1).getColore(3));
+
+        dialog.show();
     }
 
 

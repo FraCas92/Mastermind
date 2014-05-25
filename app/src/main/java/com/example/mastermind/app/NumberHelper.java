@@ -55,8 +55,8 @@ public class NumberHelper
                 number.add(a);
             }
             list.add(number);
-            // Incremento j per saltare il trattino di separazione dei numeri (1234-1234-1234....)
-            j++;
+            // Incremento j di 5 per saltare anche il trattino di separazione dei numeri (1234-1234-1234....)
+            j+=5;
         }
 
         return list;
