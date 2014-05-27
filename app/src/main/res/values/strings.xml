@@ -76,5 +76,6 @@
     <string name="title_activity_help">Help</string>
 
     <string name="instructions">Mastermind is a code-breaking game for two players.\nYou can play offline against the computer or online with a friend.\nThe goal is to guess the colour combination created by your opponent.\nEach player choose a colour combination and try to guess the opponent\'s one.\nFor every guess submitted, you\'ll receive 4 small circles indicating the result: </string>
+    <string name="instructions2">Green circle - Correct colour, right position\nYellow circle - Correct colour, wrong position\nRed circle - No colour matched\n\nThe winner is the first player who guess the opponent's colour combination, obtaining 4 green circles.</string>
 
 </resources>
