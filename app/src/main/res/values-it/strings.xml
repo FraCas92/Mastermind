@@ -1,0 +1,15 @@
+<resources>
+
+    <string name="achievement">Obiettivi</string>
+    <string name="achievements_not_available">Per vedere gli obiettivi devi effettuare il login.</string>
+    <string name="action_settings">Impostazioni</string>
+    <string name="app_name">Mastermind</string>
+    <string name="cancel">Abbandona</string>
+    <string name="choose_your_code">Scegli la tua combinazione</string>
+    <string name="leaderboards_not_available">Per vedere le classifiche devi effettuare il login.</string>
+    <string name="show_achievements">Obiettivi</string>
+    <string name="show_leaderboards">Classifiche</string>
+    <string name="instructions">Mastermind è un famoso puzzle game per due giocatori.\nIn questa versione puoi giocare offline in modalità single player, oppure online sfidando un amico.\nL\'obiettivo è indovinare la combinazione di colori scelta dal tuo avversario.\nCiascun giocatore sceglie la propria combinazione e successivamente inizia a tentare di indovinare quella dell\'avversario.\nPer ogni tentativo effettuato, viene mostrato un risultato indicato da 4 piccoli cerchi:</string>
+    <string name="instructions2">Cerchio verde - Colore e posizione corretti\nCerchio giallo - Colore corretto, posizione errata\nCerchio rosso - Colore errato\n\nIl vincitore è il primo giocatore che indovina la combinazione dell\'avversario, ottenenendo 4 cerchi verdi. </string>
+
+</resources>
