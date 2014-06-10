@@ -1,6 +1,7 @@
 package com.example.mastermind.app;
 
 import android.app.Dialog;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -11,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import junit.framework.Test;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -260,6 +263,8 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             bFinish=false;
             button_checkCombinazione.setEnabled(false);
 
+            PlayInsertCombinationSound();
+
             // Se ho azzeccato la combinazione devo evidenziare in qualche modo la vittoria e restituire un codice speciale
             if (combinazioneProvata.getStato_combinazione()==4)
             {
@@ -273,6 +278,20 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         setResult(nResultCode, getIntent());
         if (bFinish)
             finish();
+    }
+
+    public void PlayInsertCombinationSound()
+    {
+        MediaPlayer mp = MediaPlayer.create(MultiPlayerGamePlay.this, R.raw.addrow);
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+            }
+
+        });
+        mp.start();
     }
 
     public void SvuotaSceltaColori()
