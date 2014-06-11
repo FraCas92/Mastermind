@@ -3,6 +3,7 @@ package com.example.mastermind.app;
 
 import android.app.Dialog;
 
+import android.media.MediaPlayer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -58,7 +59,7 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
         list_combinazioni = (ListView) findViewById(R.id.listView1);
 
         combinazioniProvate = new ArrayList<Combinazione>();
-        adapter = new AdapterCombinazioni(this,R.layout.row_combinazione,combinazioniProvate);
+        adapter = new AdapterCombinazioni(this, R.layout.row_combinazione, combinazioniProvate);
         list_combinazioni.setAdapter(adapter);
 
         // Colori da visualizzare nella Quick Action (per la scelta del colore)
@@ -94,7 +95,7 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                avviaSceltaColore(img_primo_colore,0);
+                avviaSceltaColore(img_primo_colore, 0);
 
             }
         });
@@ -102,7 +103,7 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                avviaSceltaColore(img_secondo_colore,1);
+                avviaSceltaColore(img_secondo_colore, 1);
 
             }
         });
@@ -110,7 +111,7 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                avviaSceltaColore(img_terzo_colore,2);
+                avviaSceltaColore(img_terzo_colore, 2);
 
             }
         });
@@ -118,7 +119,7 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                avviaSceltaColore(img_quarto_colore,3);
+                avviaSceltaColore(img_quarto_colore, 3);
 
             }
         });
@@ -135,8 +136,8 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
                 int coloreScelto = impostaColore(pos);
 
                 // Salvo sul posizione della combinazione il colore scelto
-                if (coloreScelto>0)
-                    combinazioneScelta.set(pos_colore,coloreScelto);
+                if (coloreScelto > 0)
+                    combinazioneScelta.set(pos_colore, coloreScelto);
 
             }
         });
@@ -171,7 +172,7 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
             // Imposto i colori della combinazione random
             for (int i = 0; i < max_combinazioni; i++) {
 
-                switch (i){
+                switch (i) {
                     case 0:
                         changeImage = img_primo_colore;
                         break;
@@ -193,41 +194,42 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
     }
 
 
-    public int impostaColore(int pos){
+    public int impostaColore(int pos) {
 
         int coloreScelto = 0;
 
         if (pos == 0) { //Add item selected
             changeImage.setImageResource(R.drawable.ic_rosso);
-            coloreScelto=1;
+            coloreScelto = 1;
         } else if (pos == 1) {
             changeImage.setImageResource(R.drawable.ic_blu);
-            coloreScelto=2;
+            coloreScelto = 2;
         } else if (pos == 2) {
             changeImage.setImageResource(R.drawable.ic_arancione);
-            coloreScelto=3;
+            coloreScelto = 3;
         } else if (pos == 3) {
             changeImage.setImageResource(R.drawable.ic_verde);
-            coloreScelto=4;
+            coloreScelto = 4;
         } else if (pos == 4) {
             changeImage.setImageResource(R.drawable.ic_giallo);
-            coloreScelto=5;
+            coloreScelto = 5;
         } else if (pos == 5) {
             changeImage.setImageResource(R.drawable.ic_nero);
-            coloreScelto=6;
+            coloreScelto = 6;
         }
 
         return coloreScelto;
 
     }
 
-    private void avviaSceltaColore(ImageView immagine,int posizione){
+    private void avviaSceltaColore(ImageView immagine, int posizione) {
         changeImage = immagine;
         pos_colore = posizione;
         //imageScelta = tmp;
         mQuickAction.setAnimStyle(QuickAction.ANIM_AUTO);
         mQuickAction.show(immagine);
     }
+
     /*
     * Genero 4 numeri casuali compresi tra 1 e 4
     * 1-Rosso
@@ -235,7 +237,7 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
     * 3-Verde
     * 4-Giallo
     * */
-    private void getCombinazioneMagica(){
+    private void getCombinazioneMagica() {
 
         combinazioneVincente = new ArrayList<Integer>();
         combinazioneScelta = new ArrayList<Integer>();
@@ -246,7 +248,7 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
         for (int i = 0; i < max_combinazioni; i++) {
 
             // Inizializzo la combinazione scelta
-            combinazioneScelta.add(i,0);
+            combinazioneScelta.add(i, 0);
 
         }
 
@@ -255,23 +257,22 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
         combinazioneVincente = combinazioneRandom.getCombinazionRandom(max_colori);
     }
 
-    public void onCheckClicked(View view){
+    public void onCheckClicked(View view) {
 
-        Combinazione combinazioneProvata = new Combinazione(combinazioneScelta,combinazioneVincente,max_combinazioni);
+        Combinazione combinazioneProvata = new Combinazione(combinazioneScelta, combinazioneVincente, max_combinazioni);
 
-        switch (combinazioneProvata.getStato_combinazione()){
+        switch (combinazioneProvata.getStato_combinazione()) {
             case 1:
-                Toast.makeText(this,"La combinazione non contiene tutti i colori!" ,Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "La combinazione non contiene tutti i colori!", Toast.LENGTH_SHORT).show();
                 return;
             case 2:
-                Toast.makeText(this,"Un colore non puo' essere impostato in piu' combinazioni!" ,Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Un colore non puo' essere impostato in piu' combinazioni!", Toast.LENGTH_SHORT).show();
                 return;
         }
 
 
-
-        if (combinazioneProvata.isCombinazioneEsistente(combinazioniProvate)){
-            Toast.makeText(this,"La combinazione è gia' stata provata" ,Toast.LENGTH_SHORT).show();
+        if (combinazioneProvata.isCombinazioneEsistente(combinazioniProvate)) {
+            Toast.makeText(this, "La combinazione è gia' stata provata", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -282,11 +283,13 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
         combinazioniProvate.add(combinazioneProvata);
         adapter.notifyDataSetChanged();
 
+        PlayInsertCombinationSound();
+
         // Mi posiziono sull'ultimo elemento aggiunto
         list_combinazioni.smoothScrollToPosition(conta_combinazioni);
 
         // Se ho trovato tutti i colori emetto dialog di avviso
-        if (combinazioneProvata.getStato_combinazione()==4){
+        if (combinazioneProvata.getStato_combinazione() == 4) {
 
             button_checkCombinazione.setEnabled(false);
             avviaMessaggioPartitaVinta();
@@ -296,10 +299,11 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
         }
 
     }
+
     /* Dialog riferito alla vincita della partita *
     /
      */
-    private void avviaMessaggioPartitaVinta(){
+    private void avviaMessaggioPartitaVinta() {
 
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_gamewin);
@@ -312,9 +316,9 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
         ImageView dialog_img_quarta = (ImageView) dialog.findViewById(R.id.imageView4);
 
         dialog_img_prima.setImageResource(combinazioniProvate.get(conta_combinazioni - 1).getColore(0));
-        dialog_img_seconda.setImageResource(combinazioniProvate.get(conta_combinazioni-1).getColore(1));
-        dialog_img_terza.setImageResource(combinazioniProvate.get(conta_combinazioni-1).getColore(2));
-        dialog_img_quarta.setImageResource(combinazioniProvate.get(conta_combinazioni-1).getColore(3));
+        dialog_img_seconda.setImageResource(combinazioniProvate.get(conta_combinazioni - 1).getColore(1));
+        dialog_img_terza.setImageResource(combinazioniProvate.get(conta_combinazioni - 1).getColore(2));
+        dialog_img_quarta.setImageResource(combinazioniProvate.get(conta_combinazioni - 1).getColore(3));
 
         Button dialog_button_rigioca = (Button) dialog.findViewById(R.id.button1);
 
@@ -339,5 +343,18 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
         dialog.show();
 
 
+    }
+
+    public void PlayInsertCombinationSound() {
+        MediaPlayer mp = MediaPlayer.create(SinglePlayerGamePlay.this, R.raw.addrow);
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+            }
+
+        });
+        mp.start();
     }
 }
