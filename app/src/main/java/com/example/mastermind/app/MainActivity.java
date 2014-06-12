@@ -45,8 +45,7 @@ import java.util.List;
  * @author Bruno Oliveira
  */
 public class MainActivity extends BaseGameActivity
-        implements MainMenuFragment.Listener,
-        GameplayFragment.Listener, OnInvitationReceivedListener,
+        implements OnInvitationReceivedListener,
         OnTurnBasedMatchUpdateReceivedListener {
 
     // Local convenience pointers
@@ -79,8 +78,8 @@ public class MainActivity extends BaseGameActivity
     public static Turn mTurnData;
 
     // Fragments
-    MainMenuFragment mMainMenuFragment;
-    GameplayFragment mGameplayFragment;
+//    MainMenuFragment mMainMenuFragment;
+//    GameplayFragment mGameplayFragment;
     MultiPlayerGamePlay mMultiPlayerActivity;
 
     // request codes we use when invoking an external activity
@@ -104,11 +103,11 @@ public class MainActivity extends BaseGameActivity
         setContentView(R.layout.activity_main);
 
         // create fragments
-        mMainMenuFragment = new MainMenuFragment();
-        mMainMenuFragment.setListener(this);
+//        mMainMenuFragment = new MainMenuFragment();
+//        mMainMenuFragment.setListener(this);
         // add initial fragment (welcome fragment)
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,
-                mMainMenuFragment).commit();
+//        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,
+//                mMainMenuFragment).commit();
 /*        mGameplayFragment = new GameplayFragment();
 
         // listen to fragment events
@@ -356,10 +355,10 @@ public class MainActivity extends BaseGameActivity
         {
             //findViewById(R.id.login_layout).setVisibility(View.GONE);
             //findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.matchup_layout).setVisibility(View.VISIBLE);
-            findViewById(R.id.gameplay_layout).setVisibility(View.GONE);
+//            findViewById(R.id.matchup_layout).setVisibility(View.VISIBLE);
+//            findViewById(R.id.gameplay_layout).setVisibility(View.GONE);
             //findViewById(R.id.sign_out_button).setVisibility(View.GONE);
-            mMainMenuFragment.setShowSignInButton(true);
+//            mMainMenuFragment.setShowSignInButton(true);
 
             if (mAlertDialog != null) {
                 mAlertDialog.dismiss();
@@ -367,7 +366,7 @@ public class MainActivity extends BaseGameActivity
             return;
         }
 
-        mMainMenuFragment.setShowSignInButton(false);
+//        mMainMenuFragment.setShowSignInButton(false);
 
         //findViewById(R.id.login_layout).setVisibility(View.GONE);
 
@@ -375,7 +374,7 @@ public class MainActivity extends BaseGameActivity
         //findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
 
         if (isDoingTurn) {
-            findViewById(R.id.matchup_layout).setVisibility(View.GONE);
+//            findViewById(R.id.matchup_layout).setVisibility(View.GONE);
             byte curPlayer = 1;
             if (!Games.Players.getCurrentPlayerId(getApiClient()).equals(mTurnData.player1Id))
                 curPlayer = 2;
@@ -385,8 +384,8 @@ public class MainActivity extends BaseGameActivity
             startActivityForResult(intent, RC_COMBINATION_REQUEST);
             //findViewById(R.id.gameplay_layout).setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.matchup_layout).setVisibility(View.VISIBLE);
-            findViewById(R.id.gameplay_layout).setVisibility(View.GONE);
+//            findViewById(R.id.matchup_layout).setVisibility(View.VISIBLE);
+//            findViewById(R.id.gameplay_layout).setVisibility(View.GONE);
         }
 
     }
@@ -397,7 +396,6 @@ public class MainActivity extends BaseGameActivity
                 .commit();
     }
 
-    @Override
     public void onShowAchievementsRequested() {
         if (isSignedIn()) {
             startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()),
@@ -412,7 +410,6 @@ public class MainActivity extends BaseGameActivity
         startActivity(new Intent(getApplicationContext(), HelpActivity.class));
     }
 
-    @Override
     public void onShowLeaderboardsRequested()
     {
         if (isSignedIn()) {
@@ -424,7 +421,6 @@ public class MainActivity extends BaseGameActivity
         }
     }
 
-    @Override
     public void onEnteredScore(int finalScore) {
 
         // check for achievements
@@ -601,7 +597,7 @@ public class MainActivity extends BaseGameActivity
         } else {
             displayName = p.getDisplayName();
         }
-        mMainMenuFragment.setGreeting("Hello, " + displayName);
+//        mMainMenuFragment.setGreeting("Hello, " + displayName);
 
 
         // if we have accomplishments to push, push them
@@ -636,17 +632,15 @@ public class MainActivity extends BaseGameActivity
         Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(), this);
     }
 
-    @Override
     public void onSignInButtonClicked() {
         // start the sign-in flow
         beginUserInitiatedSignIn();
     }
 
-    @Override
     public void onSignOutButtonClicked() {
         signOut();
-        mMainMenuFragment.setGreeting(getString(R.string.signed_out_greeting));
-        mMainMenuFragment.setShowSignInButton(true);
+//        mMainMenuFragment.setGreeting(getString(R.string.signed_out_greeting));
+//        mMainMenuFragment.setShowSignInButton(true);
     }
 
     // Switch to gameplay view.
