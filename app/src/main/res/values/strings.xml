@@ -45,6 +45,7 @@
     <string name="you_win">You win! Your score is:</string>
     <string name="sign_in_to_upload_this_score">Sign in now to upload this score, save your achievements and share your progress with friends.</string>
     <string name="single_match">single player match</string>
+    <string name="multi_match">multi player match</string>
     <string name="find_opponent_code">Trova la combinazione corretta</string>
     <string name="choose_your_code">Scegli la tua combinazione</string>
 
