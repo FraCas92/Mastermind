@@ -36,31 +36,31 @@
     <Button
         android:layout_width="115dp"
         android:layout_height="115dp"
-        android:id="@+id/checkGamesButton"
         android:background="@drawable/verde"
         android:layout_gravity="center_horizontal"
-        android:onClick="onCheckGamesClicked"
-        android:text="@string/check_games"
+        android:onClick="onSingleMatchClicked"
+        android:text="@string/single_match"
+        android:id="@+id/singleMatchButton"
         android:layout_marginLeft="30dp" />
 
     <Button
         android:layout_width="115dp"
         android:layout_height="115dp"
-        android:text="@string/quick_match"
+        android:text="@string/show_leaderboards"
         android:id="@+id/quickMatchButton"
         android:background="@drawable/giallo"
-        android:onClick="onQuickMatchClicked"
+        android:onClick="onShowLeaderboardsRequested"
         android:layout_gravity="center_horizontal"
         android:layout_marginRight="30dp" />
 
     <Button
         android:layout_width="115dp"
         android:layout_height="115dp"
-        android:onClick="onSingleMatchClicked"
-        android:text="@string/single_match"
-        android:id="@+id/singleMatchButton"
+        android:onClick="onCheckGamesClicked"
+        android:text="@string/check_games"
         android:background="@drawable/blu"
         android:layout_gravity="center_horizontal"
+        android:id="@+id/checkGamesButton"
         android:layout_marginLeft="30dp" />
 
             <!--<com.google.android.gms.common.SignInButton-->

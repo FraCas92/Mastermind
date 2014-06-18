@@ -1,6 +1,7 @@
 
 package com.example.mastermind.app;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,7 +9,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -396,7 +400,7 @@ public class MainActivity extends BaseGameActivity
                 .commit();
     }
 
-    public void onShowAchievementsRequested() {
+    public void onShowAchievementsRequested(View view) {
         if (isSignedIn()) {
             startActivityForResult(Games.Achievements.getAchievementsIntent(getApiClient()),
                     RC_UNUSED);
@@ -410,7 +414,7 @@ public class MainActivity extends BaseGameActivity
         startActivity(new Intent(getApplicationContext(), HelpActivity.class));
     }
 
-    public void onShowLeaderboardsRequested()
+    public void onShowLeaderboardsRequested(View view)
     {
         if (isSignedIn()) {
             startActivityForResult(Games.Leaderboards.getAllLeaderboardsIntent(getApiClient()),
@@ -989,5 +993,24 @@ public class MainActivity extends BaseGameActivity
         }
 
         return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.help:
+                ShowInstructions();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
