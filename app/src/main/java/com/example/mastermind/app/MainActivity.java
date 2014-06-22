@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -152,6 +153,19 @@ public class MainActivity extends BaseGameActivity
         //);
         mDataView = ((TextView) findViewById(R.id.data_view));
         mTurnTextView = ((TextView) findViewById(R.id.turn_counter_view));
+
+        Typeface face = Typeface.createFromAsset(getAssets(), "CarterOne.ttf");
+        TextView tv = (TextView) findViewById(R.id.MultiPlayerButton);
+        tv.setTypeface(face);
+
+        tv = (TextView) findViewById(R.id.singleMatchButton);
+        tv.setTypeface(face);
+
+        tv = (TextView) findViewById(R.id.LeaderboardsButton);
+        tv.setTypeface(face);
+
+        tv = (TextView) findViewById(R.id.AchievementsButton);
+        tv.setTypeface(face);
 
         setViewVisibility();
     }
@@ -412,6 +426,11 @@ public class MainActivity extends BaseGameActivity
     public void ShowInstructions()
     {
         startActivity(new Intent(getApplicationContext(), HelpActivity.class));
+    }
+
+    public void onMultiPlayerClicked(View view)
+    {
+        startActivity(new Intent(getApplicationContext(), MultiPlayerChooseGameActivity.class));
     }
 
     public void onShowLeaderboardsRequested(View view)

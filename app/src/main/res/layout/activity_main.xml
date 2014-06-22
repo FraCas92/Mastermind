@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:background="@drawable/background_login"
     android:layout_height="wrap_content">
 
               <!--<TextView-->
@@ -15,53 +16,82 @@
                 <!--android:text=""-->
                 <!--android:textAppearance="@style/HelpText.Caption" />-->
 
-            <!--<Button-->
-                <!--android:id="@+id/sign_out_button"-->
-                <!--android:layout_width="200dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="@string/sign_out" />-->
-
+    <!--<com.google.android.gms.common.SignInButton-->
+    <!--android:id="@+id/sign_in_button"-->
+    <!--android:layout_width="120dp"-->
+    <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="right">-->
+    <!--</com.google.android.gms.common.SignInButton>-->
 
     <Button
         android:layout_width="115dp"
         android:layout_height="115dp"
-        android:text="@string/start_match"
-        android:id="@+id/startMatchButton"
-        android:background="@drawable/rosso"
-        android:onClick="onStartMatchClicked"
+        android:text="@string/multiplayer"
+        android:id="@+id/MultiPlayerButton"
+        android:background="@drawable/ic_rosso"
+        android:onClick="onMultiPlayerClicked"
         android:layout_gravity="center_horizontal"
         android:layout_marginRight="30dp"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="20dp"
+        android:textColor="#ffd7f1fa"
+        android:textSize="13sp" />
+
+    <!--<Button-->
+        <!--android:layout_width="115dp"-->
+        <!--android:layout_height="115dp"-->
+        <!--android:text="@string/start_match"-->
+        <!--android:id="@+id/startMatchButton"-->
+        <!--android:background="@drawable/rosso"-->
+        <!--android:onClick="onStartMatchClicked"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:layout_marginRight="30dp"-->
+        <!--android:layout_marginTop="20dp" />-->
 
     <Button
         android:layout_width="115dp"
         android:layout_height="115dp"
-        android:background="@drawable/verde"
+        android:background="@drawable/ic_verde"
         android:layout_gravity="center_horizontal"
         android:onClick="onSingleMatchClicked"
         android:text="@string/single_match"
         android:id="@+id/singleMatchButton"
+        android:textColor="#ffd7f1fa"
+        android:textSize="13sp"
         android:layout_marginLeft="30dp" />
 
     <Button
         android:layout_width="115dp"
         android:layout_height="115dp"
         android:text="@string/show_leaderboards"
-        android:id="@+id/quickMatchButton"
-        android:background="@drawable/giallo"
+        android:id="@+id/LeaderboardsButton"
+        android:background="@drawable/ic_arancione"
         android:onClick="onShowLeaderboardsRequested"
         android:layout_gravity="center_horizontal"
-        android:layout_marginRight="30dp" />
+        android:layout_marginRight="30dp"
+        android:textColor="#ffd7f1fa"
+        android:textSize="13sp" />
+
+    <!--<Button-->
+        <!--android:layout_width="115dp"-->
+        <!--android:layout_height="115dp"-->
+        <!--android:onClick="onCheckGamesClicked"-->
+        <!--android:text="@string/check_games"-->
+        <!--android:background="@drawable/blu"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:id="@+id/checkGamesButton"-->
+        <!--android:layout_marginLeft="30dp" />-->
 
     <Button
         android:layout_width="115dp"
         android:layout_height="115dp"
-        android:onClick="onCheckGamesClicked"
-        android:text="@string/check_games"
-        android:background="@drawable/blu"
+        android:onClick="onShowAchievementsRequested"
+        android:text="@string/show_achievements"
+        android:background="@drawable/ic_blu"
         android:layout_gravity="center_horizontal"
-        android:id="@+id/checkGamesButton"
-        android:layout_marginLeft="30dp" />
+        android:id="@+id/AchievementsButton"
+        android:layout_marginLeft="30dp"
+        android:textColor="#ffd7f1fa"
+        android:textSize="13sp" />
 
             <!--<com.google.android.gms.common.SignInButton-->
                 <!--android:id="@+id/sign_in_button"-->
