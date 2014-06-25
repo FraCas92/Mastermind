@@ -39,6 +39,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginRight="30dp"
             android:textColor="#ffd7f1fa"
+            android:textSize="13sp"
             android:layout_marginTop="20dp" />
 
             <!--<Button
@@ -51,19 +52,7 @@
                 android:id="@+id/singleMatchButton"
                 android:textColor="#ffd7f1fa"
                 android:textSize="13sp"
-                android:layout_marginLeft="30dp" />
-
-            <Button
-                android:layout_width="115dp"
-                android:layout_height="115dp"
-                android:text="@string/show_leaderboards"
-                android:id="@+id/LeaderboardsButton"
-                android:background="@drawable/ic_arancione"
-                android:onClick="onShowLeaderboardsRequested"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginRight="30dp"
-                android:textColor="#ffd7f1fa"
-                android:textSize="13sp" />-->
+                android:layout_marginLeft="30dp" />-->
 
             <Button
             android:layout_width="115dp"
@@ -74,7 +63,20 @@
             android:layout_gravity="center_horizontal"
             android:id="@+id/checkGamesButton"
             android:textColor="#ffd7f1fa"
+            android:textSize="13sp"
             android:layout_marginLeft="30dp" />
+
+            <Button
+                android:layout_width="115dp"
+                android:layout_height="115dp"
+                android:text="@string/quick_match"
+                android:id="@+id/quickMatchButton"
+                android:background="@drawable/ic_arancione"
+                android:onClick="onQuickMatchClicked"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginRight="30dp"
+                android:textColor="#ffd7f1fa"
+                android:textSize="13sp" />
 
             <!--<Button
                 android:layout_width="115dp"
