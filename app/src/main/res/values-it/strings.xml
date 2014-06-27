@@ -11,5 +11,9 @@
     <string name="show_leaderboards">Classifiche</string>
     <string name="instructions">Mastermind è un famoso puzzle game per due giocatori.\nIn questa versione puoi giocare offline in modalità single player, oppure online sfidando un amico.\nL\'obiettivo è indovinare la combinazione di colori scelta dal tuo avversario.\nCiascun giocatore sceglie la propria combinazione e successivamente inizia a tentare di indovinare quella dell\'avversario.\nPer ogni tentativo effettuato, viene mostrato un risultato indicato da 4 piccoli cerchi:</string>
     <string name="instructions2">Cerchio verde - Colore e posizione corretti\nCerchio giallo - Colore corretto, posizione errata\nCerchio rosso - Colore errato\n\nIl vincitore è il primo giocatore che indovina la combinazione dell\'avversario, ottenenendo 4 cerchi verdi. </string>
+    <string name="check_games">Le tue partite</string>
+    <string name="quick_match">Partita veloce</string>
+    <string name="start_match">Nuova partita</string>
+
 
 </resources>

@@ -13,55 +13,31 @@
             android:layout_height="wrap_content"
             android:paddingLeft="50dp"
             android:layout_gravity="center|fill"
-            android:gravity="center_vertical">
-
-
-        <!--<Button
-            android:layout_width="115dp"
-            android:layout_height="115dp"
-            android:text="@string/multiplayer"
-            android:id="@+id/MultiPlayerButton"
-            android:background="@drawable/ic_rosso"
-            android:layout_marginRight="30dp"
-            android:onClick="onMultiPlayerClicked"
-            android:textColor="#ffd7f1fa"
-            android:textSize="13sp"
-            android:layout_gravity="center_horizontal" />-->
+            android:layout_marginTop="20dp">
 
 
             <Button
             android:layout_width="115dp"
             android:layout_height="115dp"
-            android:text="@string/start_match"
-            android:id="@+id/startMatchButton"
+            android:onClick="onCheckGamesClicked"
+            android:id="@+id/checkGamesButton"
             android:background="@drawable/ic_rosso"
-            android:onClick="onStartMatchClicked"
+            android:text="@string/check_games"
             android:layout_gravity="center_horizontal"
             android:layout_marginRight="30dp"
             android:textColor="#ffd7f1fa"
             android:textSize="13sp"
             android:layout_marginTop="20dp" />
 
-            <!--<Button
-                android:layout_width="115dp"
-                android:layout_height="115dp"
-                android:background="@drawable/ic_verde"
-                android:layout_gravity="center_horizontal"
-                android:onClick="onSingleMatchClicked"
-                android:text="@string/single_match"
-                android:id="@+id/singleMatchButton"
-                android:textColor="#ffd7f1fa"
-                android:textSize="13sp"
-                android:layout_marginLeft="30dp" />-->
-
             <Button
             android:layout_width="115dp"
             android:layout_height="115dp"
-            android:onClick="onCheckGamesClicked"
-            android:text="@string/check_games"
-            android:background="@drawable/ic_blu"
+            android:id="@+id/startMatchButton"
+            android:onClick="onStartMatchClicked"
+            android:text="@string/start_match"
+            android:background="@drawable/ic_verde"
             android:layout_gravity="center_horizontal"
-            android:id="@+id/checkGamesButton"
+
             android:textColor="#ffd7f1fa"
             android:textSize="13sp"
             android:layout_marginLeft="30dp" />
@@ -77,18 +53,6 @@
                 android:layout_marginRight="30dp"
                 android:textColor="#ffd7f1fa"
                 android:textSize="13sp" />
-
-            <!--<Button
-                android:layout_width="115dp"
-                android:layout_height="115dp"
-                android:onClick="onShowAchievementsRequested"
-                android:text="@string/show_achievements"
-                android:background="@drawable/ic_blu"
-                android:layout_gravity="center_horizontal"
-                android:id="@+id/AchievementsButton"
-                android:layout_marginLeft="30dp"
-                android:textColor="#ffd7f1fa"
-                android:textSize="13sp" />-->
 
         </LinearLayout>
 

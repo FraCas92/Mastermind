@@ -1,23 +1,31 @@
 
 package com.example.mastermind.app;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Shader;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
@@ -36,8 +44,13 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.example.games.basegameutils.BaseGameActivity;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Our main activity for the game.
@@ -66,6 +79,8 @@ public class MainActivity extends BaseGameActivity
     // For our intents
     final static int RC_SELECT_PLAYERS = 10000;
     final static int RC_LOOK_AT_MATCHES = 10001;
+
+    public static GoogleApiClient s_ApiClient;
 
     // How long to show toasts.
     final static int TOAST_DELAY = 2000;
@@ -151,6 +166,7 @@ public class MainActivity extends BaseGameActivity
 //                    }
 //                }
         //);
+
         mDataView = ((TextView) findViewById(R.id.data_view));
         mTurnTextView = ((TextView) findViewById(R.id.turn_counter_view));
 
@@ -611,24 +627,23 @@ public class MainActivity extends BaseGameActivity
         // Show sign-out button on main menu
         //mMainMenuFragment.setShowSignInButton(false);
 
-        // Set the greeting appropriately on main menu
-        Player p = Games.Players.getCurrentPlayer(getApiClient());
-        String displayName;
-        if (p == null) {
-            Log.w(TAG, "mGamesClient.getCurrentPlayer() is NULL!");
-            displayName = "???";
-        } else {
-            displayName = p.getDisplayName();
+        s_ApiClient = getApiClient();
+
+        Button signbtn = ((Button) findViewById(R.id.sign_in_button));
+        try {
+            Connection a = new Connection();
+            Drawable img = (Drawable)a.execute(Games.Players.getCurrentPlayer(getApiClient()).getHiResImageUrl()).get();
+            signbtn.setBackgroundDrawable(img);
         }
-//        mMainMenuFragment.setGreeting("Hello, " + displayName);
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        catch (ExecutionException e)
+        {
+            e.printStackTrace();
+        }
 
-
-        // if we have accomplishments to push, push them
-/*        if (!mOutbox.isEmpty()) {
-            pushAccomplishments();
-            Toast.makeText(this, getString(R.string.your_progress_will_be_uploaded),
-                    Toast.LENGTH_LONG).show();
-        }*/
 
         if (mHelper.getTurnBasedMatch() != null) {
             // GameHelper will cache any connection hint it gets. In this case,
@@ -652,12 +667,20 @@ public class MainActivity extends BaseGameActivity
         // Likewise, we are registering the optional MatchUpdateListener, which
         // will replace notifications you would get otherwise. You do *NOT* have
         // to register a MatchUpdateListener.
-        Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(), this);
+        //Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(), this);
     }
 
-    public void onSignInButtonClicked() {
+    public void onSignInButtonClicked(View view) {
         // start the sign-in flow
-        beginUserInitiatedSignIn();
+        if (!isSignedIn())
+            beginUserInitiatedSignIn();
+        else
+        {
+            signOut();
+            Button signBtn = (Button)findViewById(R.id.sign_in_button);
+            Drawable glight = getResources().getDrawable(R.drawable.glight);
+            signBtn.setBackgroundDrawable(glight);
+        }
     }
 
     public void onSignOutButtonClicked() {
@@ -1031,5 +1054,48 @@ public class MainActivity extends BaseGameActivity
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private class Connection extends AsyncTask {
+
+        @Override
+        protected Object doInBackground(Object... arg0) {
+            return getDrawableFromURL((String)arg0[0]);
+        }
+
+    }
+
+    private Drawable getDrawableFromURL(String url1) {
+            try
+            {
+                URL url = new URL(url1);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                myBitmap = createRoundImage(myBitmap);
+                Drawable draw = new BitmapDrawable(getResources(),myBitmap);
+                return draw;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                return null;
+            }
+    }
+
+    private Bitmap createRoundImage(Bitmap loadedImage) {
+        Bitmap circleBitmap = Bitmap.createBitmap(loadedImage.getWidth(), loadedImage.getHeight(), Bitmap.Config.ARGB_8888);
+
+        BitmapShader shader = new BitmapShader(loadedImage, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setShader(shader);
+
+        Canvas c = new Canvas(circleBitmap);
+        c.drawCircle(loadedImage.getWidth() / 2, loadedImage.getHeight() / 2, loadedImage.getWidth() / 2, paint);
+
+        return circleBitmap;
     }
 }
