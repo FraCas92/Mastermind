@@ -60,7 +60,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         mAdapter = new AdapterCombinazioni(this,R.layout.row_combinazione,mCombinazioniProvate);
         mList_combinazioni.setAdapter(mAdapter);
 
-        if (MainActivity.mTurnData.player1Num.isEmpty() || MainActivity.mTurnData.player2Num.isEmpty())
+        if (MultiPlayerChooseGameActivity.mTurnData.player1Num.isEmpty() || MultiPlayerChooseGameActivity.mTurnData.player2Num.isEmpty())
         {
             mChoose_your_code = true;
             ((TextView) findViewById(R.id.textView)).setText(R.string.choose_your_code);
@@ -72,15 +72,15 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             String sMyData;
             if (mCurPlayer==1)
             {
-                mStrMyNumber = MainActivity.mTurnData.player1Num;
-                sOpponentNumber = MainActivity.mTurnData.player2Num;
-                sMyData = MainActivity.mTurnData.data1;
+                mStrMyNumber = MultiPlayerChooseGameActivity.mTurnData.player1Num;
+                sOpponentNumber = MultiPlayerChooseGameActivity.mTurnData.player2Num;
+                sMyData = MultiPlayerChooseGameActivity.mTurnData.data1;
             }
             else
             {
-                mStrMyNumber = MainActivity.mTurnData.player2Num;
-                sOpponentNumber = MainActivity.mTurnData.player1Num;
-                sMyData = MainActivity.mTurnData.data2;
+                mStrMyNumber = MultiPlayerChooseGameActivity.mTurnData.player2Num;
+                sOpponentNumber = MultiPlayerChooseGameActivity.mTurnData.player1Num;
+                sMyData = MultiPlayerChooseGameActivity.mTurnData.data2;
             }
 
             mCombinazioneVincente = new ArrayList<Integer>(4);
@@ -224,12 +224,12 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         // Se sto scegliendo il mio codice e l'avversario ha già scelto il suo, allora non esco dall'activity e inizio il gioco
         if (mChoose_your_code)
         {
-            if ((mCurPlayer==1 && !MainActivity.mTurnData.player2Num.isEmpty()) || (mCurPlayer==2 && !MainActivity.mTurnData.player1Num.isEmpty()))
+            if ((mCurPlayer==1 && !MultiPlayerChooseGameActivity.mTurnData.player2Num.isEmpty()) || (mCurPlayer==2 && !MultiPlayerChooseGameActivity.mTurnData.player1Num.isEmpty()))
             {
                 if (mCurPlayer==1)
-                    MainActivity.mTurnData.player1Num = NumberHelper.GetString(mCombinazioneScelta);
+                    MultiPlayerChooseGameActivity.mTurnData.player1Num = NumberHelper.GetString(mCombinazioneScelta);
                 else
-                    MainActivity.mTurnData.player2Num = NumberHelper.GetString(mCombinazioneScelta);
+                    MultiPlayerChooseGameActivity.mTurnData.player2Num = NumberHelper.GetString(mCombinazioneScelta);
 
                 ((TextView) findViewById(R.id.textView)).setText(R.string.find_opponent_code);
                 SvuotaSceltaColori();
@@ -269,7 +269,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             if (combinazioneProvata.getStato_combinazione()==4)
             {
 
-                nResultCode = MainActivity.RESULT_FINISH;
+                nResultCode = MultiPlayerChooseGameActivity.RESULT_FINISH;
             }
         }
 

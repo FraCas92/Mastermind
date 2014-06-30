@@ -100,8 +100,7 @@
         android:layout_height="50dp"
         android:background="@drawable/glight"
         android:onClick="onSignInButtonClicked"
-        android:layout_gravity="left"
-        android:gravity="right" />
+        android:layout_gravity="left" />
 
     </LinearLayout>
 

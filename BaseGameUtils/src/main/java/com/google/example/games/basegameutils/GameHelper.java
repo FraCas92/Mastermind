@@ -32,6 +32,7 @@ import android.util.Log;
 import com.google.android.gms.appstate.AppStateManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesActivityResultCodes;
@@ -108,9 +109,9 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.Builder mGoogleApiClientBuilder = null;
 
     // Api options to use when adding each API, null for none
-    GoogleApiClient.ApiOptions mGamesApiOptions = null;
-    GoogleApiClient.ApiOptions mPlusApiOptions = null;
-    GoogleApiClient.ApiOptions mAppStateApiOptions = null;
+    Games.GamesOptions mGamesApiOptions = null;
+    Plus.PlusOptions mPlusApiOptions = null;
+    Api.ApiOptions.NoOptions mAppStateApiOptions = null;
 
     // Google API client object we manage.
     GoogleApiClient mGoogleApiClient = null;
@@ -234,7 +235,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
      * Sets the options to pass when setting up the Games API. Call before
      * setup().
      */
-    public void setGamesApiOptions(GoogleApiClient.ApiOptions options) {
+    public void setGamesApiOptions(Games.GamesOptions options) {
         doApiOptionsPreCheck();
         mGamesApiOptions = options;
     }
@@ -243,7 +244,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
      * Sets the options to pass when setting up the AppState API. Call before
      * setup().
      */
-    public void setAppStateApiOptions(GoogleApiClient.ApiOptions options) {
+    public void setAppStateApiOptions(Api.ApiOptions.NoOptions options) {
         doApiOptionsPreCheck();
         mAppStateApiOptions = options;
     }
@@ -252,7 +253,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
      * Sets the options to pass when setting up the Plus API. Call before
      * setup().
      */
-    public void setPlusApiOptions(GoogleApiClient.ApiOptions options) {
+    public void setPlusApiOptions(Plus.PlusOptions options) {
         doApiOptionsPreCheck();
         mPlusApiOptions = options;
     }
@@ -275,17 +276,17 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
                 mActivity, this, this);
 
         if (0 != (mRequestedClients & CLIENT_GAMES)) {
-            builder.addApi(Games.API, mGamesApiOptions);
+            builder.addApi(Games.API/*, mGamesApiOptions*/);
             builder.addScope(Games.SCOPE_GAMES);
         }
 
         if (0 != (mRequestedClients & CLIENT_PLUS)) {
-            builder.addApi(Plus.API, mPlusApiOptions);
+            builder.addApi(Plus.API/*, mPlusApiOptions*/);
             builder.addScope(Plus.SCOPE_PLUS_LOGIN);
         }
 
         if (0 != (mRequestedClients & CLIENT_APPSTATE)) {
-            builder.addApi(AppStateManager.API, mAppStateApiOptions);
+            builder.addApi(AppStateManager.API/*, mAppStateApiOptions*/);
             builder.addScope(AppStateManager.SCOPE_APP_STATE);
         }
 
