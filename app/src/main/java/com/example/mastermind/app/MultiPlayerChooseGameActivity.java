@@ -438,7 +438,7 @@ public class MultiPlayerChooseGameActivity extends BaseGameActivity
 
     public void ShowInstructions()
     {
-        startActivity(new Intent(getApplicationContext(), HelpActivity.class));
+        startActivity(new Intent(getApplicationContext(), HelpActivity2.class));
     }
 
     public void onMultiPlayerClicked(View view)

@@ -140,10 +140,10 @@ public class Combinazione {
             int new_color =  0;
             boolean trovato = false;
 
-            while (trovato == false){
+            while (!trovato){
 
                 // Nuovo colore
-                new_color =  1+(int)(Math.random()*max_colori);
+                new_color =  1+(int)(Math.random()*(max_colori));
                 trovato = true;
 
                 // Ciclo sulla combinazione fin'ora creata

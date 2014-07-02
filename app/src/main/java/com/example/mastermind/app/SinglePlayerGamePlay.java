@@ -186,6 +186,7 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
                         changeImage = img_quarto_colore;
                         break;
                 }
+                impostaColore(combinazioneScelta.get(i)-1);
             }
 
             return true;

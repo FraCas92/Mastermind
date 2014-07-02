@@ -42,6 +42,8 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
     ListView mList_combinazioni;               // Lista combinazioni provate
     List<Combinazione> mCombinazioniProvate;   // Elenco combinazioni provate
     String mStrMyNumber;
+    final int mMaxCombinazioni=4;
+    final int mMaxColori=6;
 
 
     @Override
@@ -177,27 +179,9 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         mQuickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                int coloreScelto = 0;
 
-                if (pos == 0) { //Add item selected
-                    mChangeImage.setImageResource(R.drawable.ic_rosso);
-                    coloreScelto=1;
-                } else if (pos == 1) {
-                    mChangeImage.setImageResource(R.drawable.ic_blu);
-                    coloreScelto=2;
-                } else if (pos == 2) {
-                    mChangeImage.setImageResource(R.drawable.ic_arancione);
-                    coloreScelto=3;
-                } else if (pos == 3) {
-                    mChangeImage.setImageResource(R.drawable.ic_verde);
-                    coloreScelto=4;
-                } else if (pos == 4) {
-                    mChangeImage.setImageResource(R.drawable.ic_giallo);
-                    coloreScelto=5;
-                } else if (pos == 5) {
-                    mChangeImage.setImageResource(R.drawable.ic_nero);
-                    coloreScelto=6;
-                }
+                // In base alla posizione imposto il colore
+                int coloreScelto = impostaColore(pos);
 
                 // Salvo sul posizione della combinazione il colore scelto
                 if (coloreScelto>0)
@@ -207,6 +191,34 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
         });
 
         button_checkCombinazione = (Button) findViewById(R.id.button1);
+    }
+
+    public int impostaColore(int pos) {
+
+        int coloreScelto = 0;
+
+        if (pos == 0) { //Add item selected
+            mChangeImage.setImageResource(R.drawable.ic_rosso);
+            coloreScelto = 1;
+        } else if (pos == 1) {
+            mChangeImage.setImageResource(R.drawable.ic_blu);
+            coloreScelto = 2;
+        } else if (pos == 2) {
+            mChangeImage.setImageResource(R.drawable.ic_arancione);
+            coloreScelto = 3;
+        } else if (pos == 3) {
+            mChangeImage.setImageResource(R.drawable.ic_verde);
+            coloreScelto = 4;
+        } else if (pos == 4) {
+            mChangeImage.setImageResource(R.drawable.ic_giallo);
+            coloreScelto = 5;
+        } else if (pos == 5) {
+            mChangeImage.setImageResource(R.drawable.ic_nero);
+            coloreScelto = 6;
+        }
+
+        return coloreScelto;
+
     }
 
     public void onCheckClicked(View view)
@@ -311,13 +323,43 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
+            // Handle action bar item clicks here. The action bar will
+            // automatically handle clicks on the Home/Up button, so long
+            // as you specify a parent activity in AndroidManifest.xml.
+            int id = item.getItemId();
+
+            // Combinazione random
+            if (id == R.id.action_random) {
+
+                /// Recupero una combinazione random
+                mCombinazioneScelta.clear();
+                Combinazione combinazioneRandom = new Combinazione(mMaxCombinazioni);
+                mCombinazioneScelta = combinazioneRandom.getCombinazionRandom(mMaxColori);
+
+                // Imposto i colori della combinazione random
+                for (int i = 0; i < mMaxCombinazioni; i++) {
+
+                    switch (i) {
+                        case 0:
+                            mChangeImage = mImg_primo_colore;
+                            break;
+                        case 1:
+                            mChangeImage = mImg_secondo_colore;
+                            break;
+                        case 2:
+                            mChangeImage = mImg_terzo_colore;
+                            break;
+                        case 3:
+                            mChangeImage = mImg_quarto_colore;
+                            break;
+                    }
+                    impostaColore(mCombinazioneScelta.get(i)-1);
+                }
+
+                return true;
+            }
+
         return super.onOptionsItemSelected(item);
     }
 
