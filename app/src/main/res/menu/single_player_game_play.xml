@@ -4,7 +4,12 @@
     tools:context="com.example.mastermind.app.SinglePlayerGamePlay" >
     <item android:id="@+id/action_random"
         android:title="@string/action_settings"
-        android:icon="@drawable/ic_random"
+        android:icon="@drawable/ic_action_shuffle"
         android:orderInCategory="100"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_send"
+        android:title="@string/action_settings"
+        android:icon="@drawable/ic_action_send"
+        android:orderInCategory="101"
         app:showAsAction="ifRoom" />
 </menu>

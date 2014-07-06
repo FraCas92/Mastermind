@@ -162,36 +162,45 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
         int id = item.getItemId();
 
         // Combinazione random
-        if (id == R.id.action_random) {
-
-            /// Recupero una combinazione random
-            combinazioneScelta.clear();
-            Combinazione combinazioneRandom = new Combinazione(max_combinazioni);
-            combinazioneScelta = combinazioneRandom.getCombinazionRandom(max_colori);
-
-            // Imposto i colori della combinazione random
-            for (int i = 0; i < max_combinazioni; i++) {
-
-                switch (i) {
-                    case 0:
-                        changeImage = img_primo_colore;
-                        break;
-                    case 1:
-                        changeImage = img_secondo_colore;
-                        break;
-                    case 2:
-                        changeImage = img_terzo_colore;
-                        break;
-                    case 3:
-                        changeImage = img_quarto_colore;
-                        break;
-                }
-                impostaColore(combinazioneScelta.get(i)-1);
-            }
-
+        if (id == R.id.action_random)
+        {
+            ChooseRandomPattern();
+            return true;
+        }
+        else if (id == R.id.action_send)
+        {
+            onCheckClicked();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void ChooseRandomPattern()
+    {
+        /// Recupero una combinazione random
+        combinazioneScelta.clear();
+        Combinazione combinazioneRandom = new Combinazione(max_combinazioni);
+        combinazioneScelta = combinazioneRandom.getCombinazionRandom(max_colori);
+
+        // Imposto i colori della combinazione random
+        for (int i = 0; i < max_combinazioni; i++) {
+
+            switch (i) {
+                case 0:
+                    changeImage = img_primo_colore;
+                    break;
+                case 1:
+                    changeImage = img_secondo_colore;
+                    break;
+                case 2:
+                    changeImage = img_terzo_colore;
+                    break;
+                case 3:
+                    changeImage = img_quarto_colore;
+                    break;
+            }
+            impostaColore(combinazioneScelta.get(i)-1);
+        }
     }
 
 
@@ -258,7 +267,7 @@ public class SinglePlayerGamePlay extends ActionBarActivity {
         combinazioneVincente = combinazioneRandom.getCombinazionRandom(max_colori);
     }
 
-    public void onCheckClicked(View view) {
+    public void onCheckClicked() {
 
         Combinazione combinazioneProvata = new Combinazione(combinazioneScelta, combinazioneVincente, max_combinazioni);
 

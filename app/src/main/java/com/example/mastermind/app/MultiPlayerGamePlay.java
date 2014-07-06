@@ -221,7 +221,7 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
 
     }
 
-    public void onCheckClicked(View view)
+    public void onCheckClicked()
     {
         if (mCombinazioneScelta.contains(-1))
             return;
@@ -330,37 +330,45 @@ public class MultiPlayerGamePlay extends ActionBarActivity {
             int id = item.getItemId();
 
             // Combinazione random
-            if (id == R.id.action_random) {
-
-                /// Recupero una combinazione random
-                mCombinazioneScelta.clear();
-                Combinazione combinazioneRandom = new Combinazione(mMaxCombinazioni);
-                mCombinazioneScelta = combinazioneRandom.getCombinazionRandom(mMaxColori);
-
-                // Imposto i colori della combinazione random
-                for (int i = 0; i < mMaxCombinazioni; i++) {
-
-                    switch (i) {
-                        case 0:
-                            mChangeImage = mImg_primo_colore;
-                            break;
-                        case 1:
-                            mChangeImage = mImg_secondo_colore;
-                            break;
-                        case 2:
-                            mChangeImage = mImg_terzo_colore;
-                            break;
-                        case 3:
-                            mChangeImage = mImg_quarto_colore;
-                            break;
-                    }
-                    impostaColore(mCombinazioneScelta.get(i)-1);
-                }
-
+            if (id == R.id.action_random)
+            {
+                ChooseRandomPattern();
                 return true;
             }
-
+            else if (id==R.id.action_send)
+            {
+                onCheckClicked();
+                return true;
+            }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void ChooseRandomPattern()
+    {
+        /// Recupero una combinazione random
+        mCombinazioneScelta.clear();
+        Combinazione combinazioneRandom = new Combinazione(mMaxCombinazioni);
+        mCombinazioneScelta = combinazioneRandom.getCombinazionRandom(mMaxColori);
+
+        // Imposto i colori della combinazione random
+        for (int i = 0; i < mMaxCombinazioni; i++) {
+
+            switch (i) {
+                case 0:
+                    mChangeImage = mImg_primo_colore;
+                    break;
+                case 1:
+                    mChangeImage = mImg_secondo_colore;
+                    break;
+                case 2:
+                    mChangeImage = mImg_terzo_colore;
+                    break;
+                case 3:
+                    mChangeImage = mImg_quarto_colore;
+                    break;
+            }
+            impostaColore(mCombinazioneScelta.get(i)-1);
+        }
     }
 
     private void avviaSceltaColore(ImageView immagine, int posizione){
