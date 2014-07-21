@@ -929,9 +929,9 @@ public class MultiPlayerChooseGameActivity extends BaseGameActivity
             return;
         }
 
-        // Se ho terminato il match, aggiungo 3 punti al giocatore corrente che è il vincitore
+        // Se ho terminato il match, aggiungo 1 punto al giocatore corrente che è il vincitore
         if (match.getStatus() == TurnBasedMatch.MATCH_STATUS_COMPLETE) {
-            onEnteredScore(3);
+            onEnteredScore(1);
             //mTurnData = null;
         }
 
